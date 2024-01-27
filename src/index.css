@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-background text-foreground transition-colors;
+    font-family: 'Inter', sans-serif;
+}
+
+.error-toast {
+    @apply bg-foreground-50 text-sm font-bold text-foreground shadow-md shadow-black/10;
+}
+
+.success-toast {
+    @apply bg-foreground-50 text-sm font-bold text-foreground shadow-md shadow-black/10;
+}

@@ -1,0 +1,69 @@
+{
+    "name": "uparkt-admin",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "lint-staged": {
+        "*.(js|jsx|ts|tsx)": [
+            "npm run lint:write",
+            "npm run format",
+            "git add"
+        ]
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsr generate && tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+        "lint:write": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+        "format": "prettier --write src/**",
+        "prepare": "is-ci || husky install"
+    },
+    "dependencies": {
+        "@hookform/resolvers": "^3.3.4",
+        "@nextui-org/react": "^2.2.9",
+        "@tanstack/react-query": "^5.17.19",
+        "@tanstack/react-router": "^1.12.12",
+        "@tanstack/router-cli": "^1.12.16",
+        "@tanstack/router-vite-plugin": "^1.12.8",
+        "axios": "^1.6.5",
+        "framer-motion": "^10.18.0",
+        "i18next": "^23.7.18",
+        "localforage": "^1.10.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-hook-form": "^7.49.3",
+        "react-hot-toast": "^2.4.1",
+        "usehooks-ts": "^2.10.0",
+        "zod": "^3.22.4",
+        "zod-i18n-map": "^2.25.0"
+    },
+    "devDependencies": {
+        "@iconify/react": "^4.1.1",
+        "@types/node": "^20.11.6",
+        "@types/react": "^18.2.43",
+        "@types/react-dom": "^18.2.17",
+        "@typescript-eslint/eslint-plugin": "^6.19.0",
+        "@typescript-eslint/parser": "^6.19.0",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.17",
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-import-resolver-typescript": "^3.6.1",
+        "eslint-plugin-import": "^2.29.1",
+        "eslint-plugin-prettier": "^5.1.3",
+        "eslint-plugin-react": "^7.33.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "eslint-plugin-react-refresh": "^0.4.5",
+        "husky": "^8.0.0",
+        "is-ci": "^3.0.1",
+        "lint-staged": "^15.2.0",
+        "postcss": "^8.4.33",
+        "prettier": "^3.2.4",
+        "prettier-plugin-tailwindcss": "^0.5.11",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.2.2",
+        "vite": "^5.0.8",
+        "vite-plugin-mkcert": "^1.17.3"
+    }
+}
