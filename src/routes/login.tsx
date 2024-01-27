@@ -60,6 +60,7 @@ const LoginPage = () => {
                             className="mb-4"
                             variant="bordered"
                             label="Логин"
+                            autoComplete="username"
                             isInvalid={!!errors.login?.message}
                             errorMessage={errors.login?.message}
                             {...register('login')}
@@ -69,6 +70,7 @@ const LoginPage = () => {
                             variant="bordered"
                             label="Пароль"
                             type="password"
+                            autoComplete="current-password"
                             isInvalid={!!errors.password?.message}
                             errorMessage={errors.password?.message}
                             {...register('password')}
