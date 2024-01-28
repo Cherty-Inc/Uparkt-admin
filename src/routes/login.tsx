@@ -98,4 +98,12 @@ export const Route = createFileRoute('/login')({
     validateSearch: z.object({
         redirect: z.string().optional(),
     }),
+    beforeLoad: async () => {
+        const userData = await authService.getUserData()
+        if (userData) {
+            router.navigate({
+                to: '/',
+            })
+        }
+    },
 })
