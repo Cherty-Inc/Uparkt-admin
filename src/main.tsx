@@ -6,9 +6,11 @@ import i18next from 'i18next'
 import { z } from 'zod'
 import { zodI18nMap } from 'zod-i18n-map'
 import translation from 'zod-i18n-map/locales/ru/zod.json'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { startRevalidationProccess } from '@api/services/auth'
+
 const queryClient = new QueryClient()
 
 i18next.init({
@@ -18,6 +20,8 @@ i18next.init({
     },
 })
 z.setErrorMap(zodI18nMap)
+
+startRevalidationProccess()
 
 // Render the app
 const rootElement = document.getElementById('app')!
