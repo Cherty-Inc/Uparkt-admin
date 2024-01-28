@@ -13,9 +13,11 @@ export const Route = createRootRoute({
             if (isDarkMode) {
                 console.log('set dark mode', { isDarkMode })
                 document.body.classList.add('dark')
+                document.body.classList.remove('light')
                 setFavicon('/favicon-dark.svg')
             } else {
                 console.log('set light mode', { isDarkMode })
+                document.body.classList.add('light')
                 document.body.classList.remove('dark')
                 setFavicon('/favicon-light.svg')
             }
