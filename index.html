@@ -1,6 +1,19 @@
 <!doctype html>
 <html lang="ru">
     <head>
+        <script>
+            if (
+                localStorage['usehooks-ts-dark-mode'] === 'true' ||
+                (!('usehooks-ts-dark-mode' in localStorage) &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches)
+            ) {
+                console.log('matched dark mode before rendering')
+                document.documentElement.classList.add('dark')
+            } else {
+                console.log('matched light mode before rendering')
+                document.documentElement.classList.remove('dark')
+            }
+        </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
@@ -9,11 +22,6 @@
         <link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Uparkt: Админка</title>
-        <style>
-            body {
-                background: #000;
-            }
-        </style>
     </head>
     <body>
         <div id="app"></div>

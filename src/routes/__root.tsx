@@ -1,5 +1,5 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useDarkMode } from 'usehooks-ts'
 import { useFavicon } from '@/hooks'
@@ -9,13 +9,13 @@ export const Route = createRootRoute({
         const { isDarkMode } = useDarkMode()
         const { setFavicon } = useFavicon()
 
-        useEffect(() => {
+        useLayoutEffect(() => {
             if (isDarkMode) {
+                console.log('set dark mode', { isDarkMode })
                 document.body.classList.add('dark')
-                document.body.classList.remove('light')
                 setFavicon('/favicon-dark.svg')
             } else {
-                document.body.classList.add('light')
+                console.log('set light mode', { isDarkMode })
                 document.body.classList.remove('dark')
                 setFavicon('/favicon-light.svg')
             }
