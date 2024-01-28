@@ -1,5 +1,6 @@
 import localforage from 'localforage'
 import { privateAxios, publicAxios } from '@api/axios'
+import { md5 } from 'js-md5'
 
 let tokenRevalidationIntervalID: ReturnType<typeof setInterval> | undefined
 
@@ -61,7 +62,7 @@ export const login = async (vars: { login: string; password: string; fbid?: stri
 
     const response = await publicAxios.post<SuccessResponse | BadResponse>('/api/v1.0/auth/login', {
         login: vars.login,
-        password: vars.password,
+        password: md5(vars.password),
         fbid: vars.fbid,
     })
 
