@@ -6,8 +6,7 @@
     "lint-staged": {
         "*.(js|jsx|ts|tsx)": [
             "npm run lint:write",
-            "npm run format",
-            "git add"
+            "npm run format"
         ]
     },
     "scripts": {
