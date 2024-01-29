@@ -25,6 +25,11 @@ export const MenuGroups: MenuGroup[] = [
                 path: '/example',
                 icon: 'tabler:ad-filled',
             },
+            {
+                name: 'Пользователи',
+                path: '/users',
+                icon: 'tabler:user',
+            },
         ],
     },
 ]

@@ -11,7 +11,15 @@ import './index.css'
 
 import { startRevalidationProccess } from '@api/services/auth'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 15 * 60 * 1000, // 15 minutes
+            refetchOnReconnect: true,
+            refetchOnWindowFocus: true,
+        },
+    },
+})
 
 i18next.init({
     lng: 'ru',

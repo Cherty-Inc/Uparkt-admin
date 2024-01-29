@@ -32,7 +32,7 @@ export const startRevalidationProccess = async () => {
             console.log('already existed token revalidation failed - logout')
             return
         }
-        tokenRevalidationIntervalID = setInterval(revalidateToken, 14 * 60 * 1000)
+        tokenRevalidationIntervalID = setInterval(revalidateToken, 12 * 60 * 60 * 1000)
         console.log('started revalidation process')
     } else {
         console.log('access token not found locally - revalidation proccess not started')
