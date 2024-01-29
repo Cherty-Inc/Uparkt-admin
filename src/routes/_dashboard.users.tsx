@@ -229,8 +229,8 @@ const Users: FC = () => {
                 <TableHeader>
                     <TableColumn key="id">ID</TableColumn>
                     <TableColumn key="user">ПОЛЬЗОВАТЕЛЬ</TableColumn>
-                    <TableColumn key="status">ТЕЛЕФОН</TableColumn>
-                    <TableColumn key="role">СТАТУС</TableColumn>
+                    <TableColumn key="status">СТАТУС</TableColumn>
+                    <TableColumn key="role">РОЛЬ</TableColumn>
                     <TableColumn key="datetime_create">СОЗДАН</TableColumn>
                     <TableColumn key="actions">ДЕЙСТВИЯ</TableColumn>
                 </TableHeader>
