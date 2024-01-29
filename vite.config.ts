@@ -8,6 +8,9 @@ const config = defineConfig({
     server: {
         port: 9999,
     },
+    preview: {
+        port: 9999,
+    },
 
     resolve: {
         alias: {
