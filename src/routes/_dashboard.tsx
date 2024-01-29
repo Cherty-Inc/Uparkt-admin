@@ -39,7 +39,7 @@ const DashboardLayout: FC = () => {
                 <MyNavigation />
             </aside>
             <div className="md:pl-64">
-                <div className="flex items-center gap-6 border-b border-gray-400/25 p-4 md:flex-row-reverse">
+                <div className="sticky top-0 z-50 flex items-center gap-6 border-b border-gray-400/25 bg-background/50 p-4 backdrop-blur md:flex-row-reverse">
                     <div className="flex items-center gap-4 md:flex-row-reverse">
                         <Dropdown placement="bottom">
                             <DropdownTrigger>
