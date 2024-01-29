@@ -20,11 +20,11 @@ export const MenuGroups: MenuGroup[] = [
                 path: '/',
                 icon: 'tabler:home',
             },
-            {
-                name: 'Пример',
-                path: '/example',
-                icon: 'tabler:ad-filled',
-            },
+        ],
+    },
+    {
+        name: 'Пользователи',
+        items: [
             {
                 name: 'Пользователи',
                 path: '/users',
