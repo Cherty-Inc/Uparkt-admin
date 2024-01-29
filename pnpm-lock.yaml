@@ -15,8 +15,8 @@ dependencies:
     specifier: ^5.17.19
     version: 5.17.19(react@18.2.0)
   '@tanstack/react-router':
-    specifier: ^1.12.12
-    version: 1.12.12(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.14.6
+    version: 1.14.6(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/router-cli':
     specifier: ^1.12.16
     version: 1.12.16
@@ -38,6 +38,9 @@ dependencies:
   localforage:
     specifier: ^1.10.0
     version: 1.10.0
+  luxon:
+    specifier: ^3.4.4
+    version: 3.4.4
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -67,6 +70,9 @@ devDependencies:
   '@types/js-md5':
     specifier: ^0.7.2
     version: 0.7.2
+  '@types/luxon':
+    specifier: ^3.4.2
+    version: 3.4.2
   '@types/node':
     specifier: ^20.11.6
     version: 20.11.6
@@ -3220,8 +3226,8 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@tanstack/history@1.8.0:
-    resolution: {integrity: sha512-RPukIMPedYLs3XySxcsD2PUAYnRh2GR1dKix/Rlaf8iIdl+fKH7nuX/V0+vYv7pSJZ6m/a/zmsX3Rm4xSyVB7g==}
+  /@tanstack/history@1.12.16:
+    resolution: {integrity: sha512-lhm4aRy+B3yK3TgfFnjVYaSqrWobr0sOxF3z+6ZNJQoKaJ+ga+se5J+woozN/RHIZorfa+H71fevF82MXUsoIA==}
     engines: {node: '>=12'}
     dev: false
 
@@ -3238,14 +3244,14 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-router@1.12.12(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-NAKWrwcJY18kUI6EkdoRXix6FcuDZ75ZRPKnx5MKJBYZj0FlzbKSxxAwwWFEwkKUS4mD6+O8+ifq1cwVr/RibQ==}
+  /@tanstack/react-router@1.14.6(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-I9/u051xxjFWeEz62b3k/Cyel3Q3uXwDIs+XOvZzQTmOzhP2zXUwPU5rgoxcn6NcDUFPVOgVBRXl/yB6tOAk8w==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/history': 1.8.0
+      '@tanstack/history': 1.12.16
       '@tanstack/react-store': 0.2.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -3345,6 +3351,10 @@ packages:
 
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/luxon@3.4.2:
+    resolution: {integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==}
     dev: true
 
   /@types/node@20.11.6:
@@ -5273,6 +5283,11 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /luxon@3.4.4:
+    resolution: {integrity: sha512-zobTr7akeGHnv7eBOXcRgMeCP6+uyYsczwmeRCauvpvaAltgNyTbLH/+VaEAPUeWBT+1GuNmz4wC/6jtQzbbVA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
