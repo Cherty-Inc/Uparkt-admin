@@ -30,6 +30,11 @@ export const MenuGroups: MenuGroup[] = [
                 path: '/users',
                 icon: 'tabler:user',
             },
+            {
+                name: 'Чаты',
+                path: '/chats',
+                icon: 'tabler:message',
+            },
         ],
     },
 ]

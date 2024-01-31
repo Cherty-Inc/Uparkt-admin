@@ -1,6 +1,7 @@
 import localforage from 'localforage'
 import { privateAxios, publicAxios } from '@api/axios'
 import { md5 } from 'js-md5'
+import { DateTime } from 'luxon'
 
 let tokenRevalidationIntervalID: ReturnType<typeof setInterval> | undefined
 
@@ -107,4 +108,47 @@ export const logout = async () => {
     }
     stopRevalidationProccess()
     resetUserData()
+}
+
+export interface GetMeData {
+    status: true
+    message: 'Success!'
+    me: {
+        id: number
+        token: string
+        surname: string
+        name: string
+        phone: string
+        email: string
+        role: string[]
+        date_reg: DateTime
+    }
+}
+export const getMe = async () => {
+    interface SuccessResponse {
+        status: true
+        message: 'Success!'
+        me: {
+            id: number
+            token: string
+            surname: string
+            name: string
+            phone: string
+            email: string
+            role: string[]
+            date_reg: string
+        }
+    }
+
+    const response = await privateAxios.get<SuccessResponse>('/api/v1.0/users/get_me')
+
+    const data: GetMeData = {
+        ...response.data,
+        me: {
+            ...response.data.me,
+            date_reg: DateTime.fromISO(response.data.me.date_reg),
+        },
+    }
+
+    return data
 }

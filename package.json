@@ -19,6 +19,8 @@
         "prepare": "is-ci || husky install"
     },
     "dependencies": {
+        "@emoji-mart/data": "^1.1.2",
+        "@emoji-mart/react": "^1.1.1",
         "@hookform/resolvers": "^3.3.4",
         "@nextui-org/react": "^2.2.9",
         "@tanstack/react-query": "^5.17.19",
@@ -26,6 +28,7 @@
         "@tanstack/router-cli": "^1.12.16",
         "@tanstack/router-vite-plugin": "^1.12.8",
         "axios": "^1.6.5",
+        "emoji-mart": "^5.5.2",
         "framer-motion": "^10.18.0",
         "i18next": "^23.7.18",
         "js-md5": "^0.8.3",
@@ -35,6 +38,7 @@
         "react-dom": "^18.2.0",
         "react-hook-form": "^7.49.3",
         "react-hot-toast": "^2.4.1",
+        "react-use-websocket": "^4.5.0",
         "usehooks-ts": "^2.10.0",
         "zod": "^3.22.4",
         "zod-i18n-map": "^2.25.0"
