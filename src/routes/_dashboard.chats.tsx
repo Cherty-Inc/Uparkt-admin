@@ -59,6 +59,14 @@ const Chat: FC<{
         queryKey: ['chats', { id: id_chat }] satisfies [string, { id: number }],
         queryFn: ({ queryKey }) => chatsService.GetChat(queryKey[1]),
         enabled: isChatOpen,
+        select: (data) =>
+            ({
+                ...data,
+                chat: {
+                    ...data.chat,
+                    last_messages: data.chat.last_messages.slice().reverse(),
+                },
+            }) satisfies chatsService.GetChatData,
     })
 
     const { data: me } = useQuery({
