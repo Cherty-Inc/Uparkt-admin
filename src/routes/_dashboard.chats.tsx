@@ -99,10 +99,12 @@ const Chat: FC<{
     }, [lastJsonMessage])
 
     useLayoutEffect(() => {
-        dummyBottomEl.current?.scrollIntoView({
-            behavior: 'smooth',
-        })
-    })
+        if (isChatOpen) {
+            dummyBottomEl.current?.scrollIntoView({
+                behavior: 'smooth',
+            })
+        }
+    }, [sessionMessages, dummyBottomEl, isChatOpen, data])
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Подключение...',
