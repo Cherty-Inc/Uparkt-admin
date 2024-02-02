@@ -223,13 +223,13 @@ const Chat: FC<{
                                         {data?.chat.last_messages.map((m) => (
                                             <div
                                                 className={[
-                                                    'w-fit max-w-[48%] rounded-xl px-3 py-2',
+                                                    'w-fit max-w-[80%] rounded-xl px-3 py-2',
                                                     !m.isMe && 'self-start bg-foreground-100',
                                                     m.isMe && 'self-end bg-foreground-200',
                                                 ].join(' ')}
                                                 key={m.timestamp_send.toMillis()}
                                             >
-                                                <p className="mb-1">{m.msg}</p>
+                                                <p className="mb-1 hyphens-auto break-words">{m.msg}</p>
                                                 <p className="ml-4 text-end text-xs text-foreground-300">
                                                     {m.timestamp_send.toFormat('HH:mm')}
                                                 </p>
@@ -245,7 +245,7 @@ const Chat: FC<{
                                                 ].join(' ')}
                                                 key={m.timestamp_send.toMillis()}
                                             >
-                                                <p className="mb-1">{m.msg}</p>
+                                                <p className="mb-1 hyphens-auto break-words">{m.msg}</p>
                                                 <p className="ml-4 text-end text-xs text-foreground-300">
                                                     {m.timestamp_send.toFormat('HH:mm')}
                                                 </p>
