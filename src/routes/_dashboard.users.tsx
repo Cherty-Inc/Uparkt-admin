@@ -147,9 +147,14 @@ const Users: FC = () => {
                     break
                 }
                 case 'status': {
-                    const color = v.status === 'Активен' ? 'success' : 'default'
+                    const color =
+                        {
+                            Активен: 'success',
+                            Заблокирован: 'danger',
+                        }[v.status] || 'default'
+
                     cellContent = (
-                        <Chip color={color} variant="flat">
+                        <Chip color={color as 'success'} variant="flat">
                             {v.status}
                         </Chip>
                     )
