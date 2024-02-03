@@ -39,3 +39,17 @@ jobs:
                   remote_host: ${{ secrets.DEPLOY_HOST }}
                   remote_user: ${{ vars.DEPLOY_USER }}
                   remote_key: ${{ secrets.DEPLOY_KEY }}
+
+    send-failure-notification:
+        runs-on: ubuntu-latest
+        needs: build-and-deploy
+        if: ${{ failure() }}
+        steps:
+            - name: Send failure notification to Telegram
+              uses: appleboy/telegram-action@master
+              with:
+                  to: ${{ secrets.TELEGRAM_TO }}
+                  token: ${{ secrets.TELEGRAM_TOKEN }}
+                  message: |
+                      FAILURE! Build and deployment failed.
+                      Failed run: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
