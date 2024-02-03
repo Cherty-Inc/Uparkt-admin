@@ -38,3 +38,6 @@ export const MenuGroups: MenuGroup[] = [
         ],
     },
 ]
+
+let v: unknown
+v.test()
