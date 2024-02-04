@@ -51,5 +51,7 @@ jobs:
                   to: ${{ secrets.TELEGRAM_TO }}
                   token: ${{ secrets.TELEGRAM_TOKEN }}
                   message: |
-                      FAILURE! Build and deployment failed.
-                      Failed run: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+                      Build and Deploy failed.
+                      🚧 Repository: https://github.com/${{github.repository}}
+                      🏀 Failed run: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+                      🎯 Workflow name: ${{github.workflow}}
