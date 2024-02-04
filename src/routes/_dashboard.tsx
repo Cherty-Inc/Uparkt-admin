@@ -19,18 +19,21 @@ import MyNavigation from '@components/my-navigation'
 import { Icon } from '@iconify/react'
 import { SunIcon, MoonIcon } from '@/icons'
 import { useDarkMode } from 'usehooks-ts'
+import { useQueryClient } from '@tanstack/react-query'
 
 const DashboardLayout: FC = () => {
+    const queryClient = useQueryClient()
     const navigate = useNavigate()
     const { set, isDarkMode } = useDarkMode()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-    const logout = () => {
-        navigate({
+    const logout = async () => {
+        await authService.logout()
+        await navigate({
             to: '/login',
             replace: true,
         })
-        authService.logout()
+        queryClient.removeQueries()
     }
 
     return (
