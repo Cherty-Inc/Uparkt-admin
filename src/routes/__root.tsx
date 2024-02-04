@@ -3,10 +3,12 @@ import { useLayoutEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { useDarkMode } from 'usehooks-ts'
 import { useFavicon } from '@/hooks'
+import { useMetaThemeColor } from '@/hooks/dom'
 
 export const Route = createRootRoute({
     component: () => {
         const { isDarkMode } = useDarkMode()
+        useMetaThemeColor(isDarkMode ? '#000000' : '#ffffff')
         const { setFavicon } = useFavicon()
 
         useLayoutEffect(() => {

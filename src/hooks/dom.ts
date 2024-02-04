@@ -23,3 +23,47 @@ export const useFavicon = () => {
 
     return { favicon: src, setFavicon: setSrc }
 }
+
+export const useMetaThemeColor = (
+    color: string,
+    options: {
+        revertOnUnmount?: boolean
+    } = { revertOnUnmount: true },
+) => {
+    const [meta, setMeta] = useState<HTMLMetaElement>()
+    const [previousColor, setPreviousColor] = useState('')
+
+    useEffect(() => {
+        const metaTag = document.head.querySelector('meta[name="theme-color"]') as HTMLMetaElement
+
+        if (metaTag) {
+            setMeta(metaTag)
+            setPreviousColor(metaTag.getAttribute('content')!)
+        } else {
+            const newMeta = document.createElement('meta')
+            newMeta.setAttribute('name', 'theme-color')
+
+            document.head.appendChild(newMeta)
+
+            setMeta(newMeta)
+        }
+    }, [])
+
+    const revert = () => {
+        if (!meta) {
+            return
+        }
+
+        meta.setAttribute('content', previousColor)
+    }
+
+    useEffect(() => {
+        if (!meta) {
+            return
+        }
+
+        meta.setAttribute('content', color)
+
+        return options.revertOnUnmount ? revert : undefined
+    }, [meta, color])
+}
