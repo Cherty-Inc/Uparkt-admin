@@ -87,8 +87,14 @@ export const login = async (vars: { login: string; password: string; fbid?: stri
         await saveUserData({ accessToken: response.data.token })
         await startRevalidationProccess()
     } else {
-        console.error('Не удалось залогиниться', response.data)
         stopRevalidationProccess()
+        throw new Error('Не удалось залогиниться, ' + JSON.stringify(response.data))
+    }
+
+    const meData = await getMe()
+    if (!meData.me.role.includes('Администратор')) {
+        await logout()
+        throw new Error('Не удалось залогиниться, недостаточно прав')
     }
 }
 
