@@ -239,7 +239,7 @@ const Chat: FC<{
                                                 key={m.timestamp_send.toMillis()}
                                             >
                                                 <p className="mb-1 hyphens-auto break-words">{m.msg}</p>
-                                                <p className="ml-4 text-end text-xs text-foreground-300">
+                                                <p className="ml-4 text-end text-xs text-foreground-500">
                                                     {m.timestamp_send.toFormat('HH:mm')}
                                                 </p>
                                             </div>
@@ -255,7 +255,7 @@ const Chat: FC<{
                                                 key={m.timestamp_send.toMillis()}
                                             >
                                                 <p className="mb-1 hyphens-auto break-words">{m.msg}</p>
-                                                <p className="ml-4 text-end text-xs text-foreground-300">
+                                                <p className="ml-4 text-end text-xs text-foreground-500">
                                                     {m.timestamp_send.toFormat('HH:mm')}
                                                 </p>
                                             </div>
