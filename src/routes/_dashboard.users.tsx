@@ -20,21 +20,20 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, type FC, Key, useCallback, useMemo } from 'react'
-import { useDebounce } from 'usehooks-ts'
+import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
 import { toastError, toastSuccess } from '@/utils'
 
 const Users: FC = () => {
-    const [search, setSearch] = useState('')
-    const debouncedSearch = useDebounce(search, 300)
+    const [search, setSearch] = useDebounceValue('', 300)
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(10)
 
     const queryClient = useQueryClient()
 
     const { data, isFetching } = useQuery({
-        queryKey: ['users', { search: debouncedSearch, page, itemsPerPage }] as [
+        queryKey: ['users', { search, page, itemsPerPage }] as [
             string,
             { search: string; page: number; itemsPerPage: number },
         ],
@@ -190,7 +189,7 @@ const Users: FC = () => {
                 <Input
                     className="shrink grow transition-all focus-within:grow md:w-72 md:grow-0"
                     placeholder="Поиск"
-                    value={search}
+                    defaultValue=""
                     onValueChange={setSearch}
                     variant="flat"
                     size="sm"

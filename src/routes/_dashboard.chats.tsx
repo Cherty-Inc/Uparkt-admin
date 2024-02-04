@@ -23,7 +23,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, type FC, useMemo, useEffect, useRef, useLayoutEffect } from 'react'
-import { useDarkMode, useDebounce } from 'usehooks-ts'
+import { useDarkMode, useDebounceValue } from 'usehooks-ts'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
 import * as chatsService from '@api/services/chats'
@@ -298,15 +298,14 @@ const Chat: FC<{
 }
 
 const Users: FC = () => {
-    const [search, setSearch] = useState('')
-    const debouncedSearch = useDebounce(search, 300)
+    const [search, setSearch] = useDebounceValue('', 300)
     const [page, setPage] = useState(1)
     const [itemsPerPage, setItemsPerPage] = useState(10)
 
     const queryClient = useQueryClient()
 
     const { data, isFetching } = useQuery({
-        queryKey: ['chats', { search: debouncedSearch, page, itemsPerPage }] as [
+        queryKey: ['chats', { search, page, itemsPerPage }] as [
             string,
             { search: string; page: number; itemsPerPage: number },
         ],
@@ -331,7 +330,7 @@ const Users: FC = () => {
                 <Input
                     className="shrink grow transition-all focus-within:grow md:w-72 md:grow-0"
                     placeholder="Поиск"
-                    value={search}
+                    defaultValue=""
                     onValueChange={setSearch}
                     variant="flat"
                     size="sm"
