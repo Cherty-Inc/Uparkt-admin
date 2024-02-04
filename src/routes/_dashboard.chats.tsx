@@ -35,6 +35,11 @@ import EmojiMartData from '@emoji-mart/data'
 import EmojiMart from '@emoji-mart/react'
 import EmojiMartI18N from '@emoji-mart/data/i18n/ru.json'
 
+import _LinesEllipsis from 'react-lines-ellipsis'
+import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
+
+const LinesEllipsis = responsiveHOC()(_LinesEllipsis)
+
 const Chat: FC<{
     id_chat: number
     username: string
@@ -162,11 +167,15 @@ const Chat: FC<{
                         fallback={<Icon icon="tabler:user-filled" className="size-6" />}
                         radius="full"
                         isBordered
-                        className="size-14"
+                        className="size-14 shrink-0"
                     />
-                    <div className="flex shrink grow flex-col items-stretch gap-1">
+                    <div className="flex min-w-0 shrink grow flex-col items-stretch gap-1">
                         <div>{username}</div>
-                        {msg != null && <div className="text-sm text-foreground-600">{msg}</div>}
+                        {msg != null && (
+                            <div className="text-sm text-foreground-600">
+                                <LinesEllipsis text={msg} maxLine={1} ellipsis="..." trimRight basedOn="letters" />
+                            </div>
+                        )}
                     </div>
                     {time != null && (
                         <div className="flex items-end self-stretch">
