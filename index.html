@@ -9,9 +9,11 @@
             ) {
                 console.log('matched dark mode before rendering')
                 document.documentElement.classList.add('dark')
+                document.documentElement.classList.remove('light')
             } else {
                 console.log('matched light mode before rendering')
                 document.documentElement.classList.remove('dark')
+                document.documentElement.classList.add('light')
             }
         </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />

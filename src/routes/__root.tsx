@@ -14,13 +14,13 @@ export const Route = createRootRoute({
         useLayoutEffect(() => {
             if (isDarkMode) {
                 console.log('set dark mode', { isDarkMode })
-                document.body.classList.add('dark')
-                document.body.classList.remove('light')
+                document.documentElement.classList.add('dark')
+                document.documentElement.classList.remove('light')
                 setFavicon('/favicon-dark.svg')
             } else {
                 console.log('set light mode', { isDarkMode })
-                document.body.classList.add('light')
-                document.body.classList.remove('dark')
+                document.documentElement.classList.add('light')
+                document.documentElement.classList.remove('dark')
                 setFavicon('/favicon-light.svg')
             }
         }, [isDarkMode])
