@@ -19,7 +19,7 @@ import {
 } from '@nextui-org/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, type FC, Key, useCallback, useMemo } from 'react'
+import { useState, type FC, Key, useCallback, useMemo, type ReactNode } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
@@ -82,7 +82,7 @@ const Users: FC = () => {
         return function cellRendererCallback(columnKey: Key) {
             const key = columnKey.toString() as keyof typeof v | 'user' | 'actions'
 
-            let cellContent: any
+            let cellContent: ReactNode
 
             switch (key) {
                 case 'user': {
