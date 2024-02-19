@@ -43,6 +43,7 @@ export const getAllChats = async (config: { offset: number; limit: number; searc
     const chats: ShortChat[] = response.data.chats.map((c) => {
         return {
             ...c,
+            username: c.username || 'Без имени',
             message: c.message
                 ? {
                       msg: c.message.msg,
