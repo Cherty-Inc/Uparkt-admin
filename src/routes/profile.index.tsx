@@ -186,7 +186,7 @@ const ChangePasswordForm: FC = () => {
 
 const Index: FC = () => {
     return (
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto py-16">
             <div className="mb-16">
                 <h1 className="mb-8 text-2xl">Общие настройки</h1>
                 <CommonDataForm />
