@@ -72,12 +72,7 @@ const CommonDataForm: FC = () => {
                     )}
                 />
             </div>
-            <Button
-                type="submit"
-                color="primary"
-                isLoading={isLoading || isSubmitting}
-                isDisabled={isLoading || isSubmitting}
-            >
+            <Button type="submit" color="primary" isLoading={isSubmitting} isDisabled={isLoading || isSubmitting}>
                 Сохранить
             </Button>
         </form>
