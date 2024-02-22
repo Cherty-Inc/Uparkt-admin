@@ -166,3 +166,11 @@ interface SetMeVals {
 export const setMe = (vals: SetMeVals) => {
     return privateAxios.put('/api/v1.0/users/update_me', vals)
 }
+
+interface ChangePasswordVals {
+    last_password: string
+    password: string
+}
+export const changePassword = (vals: ChangePasswordVals) => {
+    return privateAxios.put('/api/v1.0/users/update_me', vals)
+}

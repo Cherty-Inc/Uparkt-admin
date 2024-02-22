@@ -49,7 +49,7 @@ const CommonDataForm: FC = () => {
 
     return (
         <form onSubmit={onSubmit}>
-            <h1 className="mb-8 text-2xl">Общие настройки</h1>
+            <h1 className="mb-4 text-lg">Профиль</h1>
             <div className="mb-6 flex max-w-sm flex-col gap-4">
                 <Controller
                     name="name"
@@ -90,11 +90,98 @@ const CommonDataForm: FC = () => {
     )
 }
 
+const ChangePasswordForm: FC = () => {
+    const queryClient = useQueryClient()
+    const schema = useMemo(
+        () =>
+            z.object({
+                last_password: z.string(),
+                password: z.string(),
+            }),
+        [],
+    )
+
+    const {
+        handleSubmit,
+        control,
+        formState: { isLoading, isSubmitting },
+    } = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema),
+    })
+
+    const { mutateAsync } = useMutation({
+        mutationFn: authService.changePassword,
+        onSuccess: () => {
+            toastSuccess('Пароль обновлён')
+        },
+        onError: () => {
+            toastError('Ошибка')
+        },
+    })
+
+    const onSubmit = handleSubmit(async (data) => {
+        await mutateAsync(data)
+        await queryClient.invalidateQueries({
+            queryKey: ['me'],
+        })
+    })
+
+    return (
+        <form onSubmit={onSubmit}>
+            <h1 className="mb-4 text-lg">Изменить пароль</h1>
+            <div className="mb-6 flex flex-wrap items-center gap-4">
+                <Controller
+                    name="last_password"
+                    control={control}
+                    disabled={isLoading || isSubmitting}
+                    render={({ field, fieldState: { error } }) => (
+                        <Input
+                            className="max-w-sm"
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            onBlur={field.onBlur}
+                            isDisabled={field.disabled}
+                            label="Старый пароль"
+                            errorMessage={error?.message}
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="password"
+                    control={control}
+                    disabled={isLoading || isSubmitting}
+                    render={({ field, fieldState: { error } }) => (
+                        <Input
+                            className="max-w-sm"
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            onBlur={field.onBlur}
+                            isDisabled={field.disabled}
+                            label="Новый пароль"
+                            errorMessage={error?.message}
+                        />
+                    )}
+                />
+                <Button type="submit" color="danger" isLoading={isSubmitting} isDisabled={isLoading || isSubmitting}>
+                    Сохранить
+                </Button>
+            </div>
+        </form>
+    )
+}
+
 const Index: FC = () => {
     return (
-        <div className="container mx-auto px-4">
-            <div className="mt-12">
+        <div className="container mx-auto px-4 py-16">
+            <div className="mb-16">
+                <h1 className="mb-8 text-2xl">Общие настройки</h1>
                 <CommonDataForm />
+            </div>
+
+            <div className="mb-16">
+                <h1 className="mb-8 text-2xl font-bold text-danger">Опасно</h1>
+                <ChangePasswordForm />
             </div>
         </div>
     )
