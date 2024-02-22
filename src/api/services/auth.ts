@@ -158,3 +158,11 @@ export const getMe = async () => {
 
     return data
 }
+
+interface SetMeVals {
+    name?: string | undefined
+    surname?: string | undefined
+}
+export const setMe = (vals: SetMeVals) => {
+    return privateAxios.put('/api/v1.0/users/update_me', vals)
+}
