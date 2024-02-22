@@ -11,7 +11,7 @@ const ProfileLayout: FC = () => {
     return (
         <div>
             <Topbar showLogo />
-            <div className="container mx-auto py-4">
+            <div className="container mx-auto p-4">
                 <Button className="flex items-center leading-none" variant="flat" onClick={() => navigate({ to: '/' })}>
                     <Icon icon="tabler:arrow-left" className="size-5" />
                     Назад

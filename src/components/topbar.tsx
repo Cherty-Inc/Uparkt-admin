@@ -43,8 +43,8 @@ const Topbar: FC<{
         queryClient.removeQueries()
     }
     return (
-        <div className="sticky top-0 z-50 border-b border-gray-400/25 bg-background/50 p-4 backdrop-blur">
-            <div className="container mx-auto flex items-center gap-6 md:flex-row-reverse">
+        <div className="sticky top-0 z-50 border-b border-gray-400/25 bg-background/50 backdrop-blur">
+            <div className="container mx-auto flex items-center gap-6 p-4 md:flex-row-reverse">
                 <div className="flex items-center gap-4 md:flex-row-reverse">
                     <Dropdown placement="bottom">
                         <DropdownTrigger>
