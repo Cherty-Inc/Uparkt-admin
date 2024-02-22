@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toastSuccess, toastError } from '@/utils'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 const CommonDataForm: FC = () => {
     const queryClient = useQueryClient()
@@ -83,7 +84,13 @@ const CommonDataForm: FC = () => {
                     )}
                 />
             </div>
-            <Button type="submit" color="primary" isLoading={isSubmitting} isDisabled={isLoading || isSubmitting}>
+            <Button
+                type="submit"
+                color="primary"
+                startContent={<Icon icon="tabler:device-floppy" className="size-5" />}
+                isLoading={isSubmitting}
+                isDisabled={isLoading || isSubmitting}
+            >
                 Сохранить
             </Button>
         </form>
@@ -163,7 +170,13 @@ const ChangePasswordForm: FC = () => {
                         />
                     )}
                 />
-                <Button type="submit" color="danger" isLoading={isSubmitting} isDisabled={isLoading || isSubmitting}>
+                <Button
+                    type="submit"
+                    color="danger"
+                    startContent={<Icon icon="tabler:device-floppy" className="size-5" />}
+                    isLoading={isSubmitting}
+                    isDisabled={isLoading || isSubmitting}
+                >
                     Сохранить
                 </Button>
             </div>
