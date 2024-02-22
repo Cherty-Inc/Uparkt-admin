@@ -51,7 +51,7 @@ const CommonDataForm: FC = () => {
     return (
         <form onSubmit={onSubmit}>
             <h1 className="mb-4 text-lg">Профиль</h1>
-            <div className="mb-6 flex max-w-sm flex-col gap-4">
+            <div className="flex max-w-sm flex-col items-start gap-4">
                 <Controller
                     name="name"
                     control={control}
@@ -83,16 +83,16 @@ const CommonDataForm: FC = () => {
                         />
                     )}
                 />
+                <Button
+                    type="submit"
+                    color="primary"
+                    startContent={<Icon icon="tabler:device-floppy" className="size-5" />}
+                    isLoading={isSubmitting}
+                    isDisabled={isLoading || isSubmitting}
+                >
+                    Сохранить
+                </Button>
             </div>
-            <Button
-                type="submit"
-                color="primary"
-                startContent={<Icon icon="tabler:device-floppy" className="size-5" />}
-                isLoading={isSubmitting}
-                isDisabled={isLoading || isSubmitting}
-            >
-                Сохранить
-            </Button>
         </form>
     )
 }
@@ -136,7 +136,7 @@ const ChangePasswordForm: FC = () => {
     return (
         <form onSubmit={onSubmit}>
             <h1 className="mb-4 text-lg">Изменить пароль</h1>
-            <div className="mb-6 flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
                 <Controller
                     name="last_password"
                     control={control}
