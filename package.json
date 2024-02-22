@@ -23,6 +23,7 @@
         "@emoji-mart/react": "^1.1.1",
         "@hookform/resolvers": "^3.3.4",
         "@nextui-org/react": "^2.2.9",
+        "@sentry/react": "^7.102.0",
         "@tanstack/react-query": "^5.22.2",
         "@tanstack/react-query-devtools": "^5.24.0",
         "@tanstack/react-router": "^1.16.6",
@@ -48,6 +49,7 @@
     },
     "devDependencies": {
         "@iconify/react": "^4.1.1",
+        "@sentry/vite-plugin": "^2.14.2",
         "@types/js-md5": "^0.7.2",
         "@types/luxon": "^3.4.2",
         "@types/node": "^20.11.19",
