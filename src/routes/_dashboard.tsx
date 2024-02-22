@@ -5,12 +5,12 @@ import {
     DropdownTrigger,
     DropdownMenu,
     DropdownItem,
-    Avatar,
     useDisclosure,
     Button,
     Modal,
     ModalContent,
     Switch,
+    User,
 } from '@nextui-org/react'
 
 import * as authService from '@api/services/auth'
@@ -19,13 +19,19 @@ import MyNavigation from '@components/my-navigation'
 import { Icon } from '@iconify/react'
 import { SunIcon, MoonIcon } from '@/icons'
 import { useDarkMode } from 'usehooks-ts'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const DashboardLayout: FC = () => {
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     const { set, isDarkMode } = useDarkMode()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
+    const { data: me } = useQuery({
+        queryKey: ['me'],
+        queryFn: authService.getMe,
+        select: (data) => data.me,
+    })
 
     const logout = async () => {
         await authService.logout()
@@ -46,13 +52,11 @@ const DashboardLayout: FC = () => {
                     <div className="flex items-center gap-4 md:flex-row-reverse">
                         <Dropdown placement="bottom">
                             <DropdownTrigger>
-                                <Avatar
-                                    isBordered
-                                    radius="md"
+                                <User
                                     as="button"
-                                    name="А"
                                     className="transition-transform"
-                                    color="primary"
+                                    name={[me?.name, me?.surname].filter(Boolean).join(' ')}
+                                    description={me?.role}
                                 />
                             </DropdownTrigger>
                             <DropdownMenu disabledKeys={['profile']} aria-label="Profile Actions" variant="flat">
@@ -63,7 +67,7 @@ const DashboardLayout: FC = () => {
                                     className="h-14 gap-2 opacity-100"
                                 >
                                     <p className="font-semibold">Вошли как</p>
-                                    <p className="font-semibold">Администратор</p>
+                                    <p className="font-semibold">{me?.role}</p>
                                 </DropdownItem>
                                 <DropdownItem key="logout" color="danger" onClick={logout}>
                                     Выйти
