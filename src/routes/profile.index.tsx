@@ -6,7 +6,8 @@ import { Button, Input } from '@nextui-org/react'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toastSuccess, toastError } from '@/utils'
 
 const CommonDataForm: FC = () => {
     const queryClient = useQueryClient()
@@ -29,8 +30,18 @@ const CommonDataForm: FC = () => {
             queryClient.ensureQueryData({ queryKey: ['me'], queryFn: authService.getMe }).then((data) => data.me),
     })
 
+    const { mutateAsync } = useMutation({
+        mutationFn: authService.setMe,
+        onSuccess: () => {
+            toastSuccess('Данные сохранены')
+        },
+        onError: () => {
+            toastError('Ошибка')
+        },
+    })
+
     const onSubmit = handleSubmit(async (data) => {
-        await authService.setMe(data)
+        await mutateAsync(data)
         await queryClient.invalidateQueries({
             queryKey: ['me'],
         })
