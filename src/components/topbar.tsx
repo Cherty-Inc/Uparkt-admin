@@ -66,16 +66,18 @@ const Topbar: FC = () => {
                         <DropdownItem key="logout" color="danger" onClick={logout}>
                             Выйти
                         </DropdownItem>
+                        <DropdownItem onClick={() => setIsDarkMode(!isDarkMode)}>
+                            <Switch
+                                isSelected={isDarkMode}
+                                size="lg"
+                                color="primary"
+                                onValueChange={setIsDarkMode}
+                                startContent={<MoonIcon />}
+                                endContent={<SunIcon />}
+                            />
+                        </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
-                <Switch
-                    isSelected={isDarkMode}
-                    size="lg"
-                    color="primary"
-                    onValueChange={setIsDarkMode}
-                    startContent={<MoonIcon />}
-                    endContent={<SunIcon />}
-                ></Switch>
             </div>
             <div className="grow"></div>
             <Button className="md:hidden" onClick={onOpen} isIconOnly variant="ghost">
