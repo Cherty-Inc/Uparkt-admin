@@ -39,8 +39,11 @@ const queryClient = new QueryClient({
             staleTime: 15 * 60 * 1000, // 15 minutes
             refetchOnReconnect: true,
             refetchOnWindowFocus: true,
-            retry: (_, error) => {
+            retry: (failureCount, error) => {
                 console.error(error)
+                if (failureCount === 1) {
+                    Sentry.captureException(error)
+                }
                 return error.name !== 'ZodError'
             },
         },
