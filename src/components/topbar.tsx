@@ -31,7 +31,6 @@ const Topbar: FC<{
     const { data: me } = useQuery({
         queryKey: ['me'],
         queryFn: authService.getMe,
-        select: (data) => data.me,
     })
 
     const logout = async () => {

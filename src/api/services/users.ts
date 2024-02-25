@@ -1,62 +1,43 @@
 import { privateAxios } from '@/api/axios'
 import { DateTime } from 'luxon'
+import { z } from 'zod'
 
-export type UserStatus = string
+export const UserStatusScheme = z.string().min(1)
+export type UserStatusSchemeType = z.infer<typeof UserStatusScheme>
 
-export interface User {
-    id: number
-    name?: string
-    surname?: string
-    phone?: string
-    datetime_create: DateTime
-    role: string[]
-    status: UserStatus
-    photo_path?: string
-}
+export const UserScheme = z.object({
+    id: z.number(),
+    name: z.string().nullable(),
+    surname: z.string().nullable(),
+    phone: z.string().nullable(),
+    datetime_create: z.string().transform((s) => DateTime.fromFormat(s, 'dd.LL.yyyy')),
+    role: z.string().array().min(1),
+    status: UserStatusScheme,
+    photo_path: z.string().nullish(),
+})
+export type UserSchemeType = z.infer<typeof UserScheme>
 
-export interface GetAllUsersData {
-    users: User[]
-    total: number
-}
+export const ManyUsersScheme = z.object({
+    users: UserScheme.array(),
+    total: z.number(),
+})
+export type ManyUsersSchemeType = z.infer<typeof ManyUsersScheme>
 
 export const getAllUsers = async (config: {
     search: string
     sort: number
     offset: number
     limit: number
-    statuses: UserStatus[]
+    statuses: UserStatusSchemeType[]
 }) => {
-    interface SuccessResponse {
-        status: true
-        message: string
-        users: {
-            id: number
-            name: string
-            surname: string
-            phone: string
-            datetime_create: string
-            role: string[]
-            status: UserStatus
-            photo_path: string
-        }[]
-        total: number
-    }
-
-    const response = await privateAxios.post<SuccessResponse>('/api/v1.0/admins/get_users', {
+    const response = await privateAxios.post('/api/v1.0/admins/get_users', {
         search: config.search,
         sort: config.sort,
         offset: config.offset,
         limit: config.limit,
         statuses: config.statuses,
     })
-
-    const data: GetAllUsersData = {
-        ...response.data,
-        users: response.data.users.map((v) => ({
-            ...v,
-            datetime_create: DateTime.fromFormat(v.datetime_create, 'dd.LL.yyyy'),
-        })),
-    }
+    const data = ManyUsersScheme.parse(response.data)
 
     return data
 }

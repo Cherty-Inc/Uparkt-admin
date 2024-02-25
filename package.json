@@ -30,6 +30,7 @@
         "@tanstack/router-cli": "^1.16.5",
         "@tanstack/router-vite-plugin": "^1.16.5",
         "axios": "^1.6.7",
+        "clsx": "^2.1.0",
         "emoji-mart": "^5.5.2",
         "framer-motion": "^10.18.0",
         "i18next": "^23.9.0",

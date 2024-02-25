@@ -27,8 +27,7 @@ const CommonDataForm: FC = () => {
         formState: { isLoading, isSubmitting },
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
-        defaultValues: () =>
-            queryClient.ensureQueryData({ queryKey: ['me'], queryFn: authService.getMe }).then((data) => data.me),
+        defaultValues: () => queryClient.ensureQueryData({ queryKey: ['me'], queryFn: authService.getMe }),
     })
 
     const { mutateAsync } = useMutation({

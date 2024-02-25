@@ -2,6 +2,7 @@ import localforage from 'localforage'
 import { privateAxios, publicAxios } from '@api/axios'
 import { md5 } from 'js-md5'
 import { DateTime } from 'luxon'
+import { z } from 'zod'
 
 let tokenRevalidationIntervalID: ReturnType<typeof setInterval> | undefined
 
@@ -91,8 +92,8 @@ export const login = async (vars: { login: string; password: string; fbid?: stri
         throw new Error('Не удалось залогиниться, ' + JSON.stringify(response.data))
     }
 
-    const meData = await getMe()
-    if (!meData.me.role.includes('Администратор')) {
+    const me = await getMe()
+    if (!me.role.includes('Администратор')) {
         await logout()
         throw new Error('Не удалось залогиниться, недостаточно прав')
     }
@@ -130,47 +131,44 @@ export interface GetMeData {
         date_reg: DateTime
     }
 }
+
+export const MeScheme = z.object({
+    id: z.number(),
+    token: z.string().min(1),
+    name: z.string().nullable(),
+    surname: z.string().nullable(),
+    phone: z.string().nullable(),
+    email: z.string().nullable(),
+    role: z.string().array(),
+    date_reg: z.string().transform((s) => DateTime.fromISO(s)),
+})
+export type MeSchemeType = z.infer<typeof MeScheme>
+
 export const getMe = async () => {
-    interface SuccessResponse {
-        status: true
-        message: 'Success!'
-        me: {
-            id: number
-            token: string
-            surname: string
-            name: string
-            phone: string
-            email: string
-            role: string[]
-            date_reg: string
-        }
-    }
-
-    const response = await privateAxios.get<SuccessResponse>('/api/v1.0/users/get_me')
-
-    const data: GetMeData = {
-        ...response.data,
-        me: {
-            ...response.data.me,
-            date_reg: DateTime.fromISO(response.data.me.date_reg),
-        },
-    }
-
+    const scheme = z.object({
+        me: MeScheme,
+    })
+    const response = await privateAxios.get('/api/v1.0/users/get_me')
+    const data = scheme.parse(response.data).me
     return data
 }
 
-interface SetMeVals {
-    name?: string | undefined
-    surname?: string | undefined
-}
-export const setMe = (vals: SetMeVals) => {
+export const SetMeScheme = z.object({
+    name: z.string().optional(),
+    surname: z.string().optional(),
+})
+export type SetMeSchemeType = z.infer<typeof SetMeScheme>
+export const setMe = (vals: SetMeSchemeType) => {
+    vals = SetMeScheme.parse(vals)
     return privateAxios.put('/api/v1.0/users/update_me', vals)
 }
 
-interface ChangePasswordVals {
-    last_password: string
-    password: string
-}
-export const changePassword = (vals: ChangePasswordVals) => {
+export const ChangePasswordScheme = z.object({
+    last_password: z.string().min(1),
+    password: z.string().min(1),
+})
+export type ChangePasswordSchemeType = z.infer<typeof ChangePasswordScheme>
+export const changePassword = (vals: ChangePasswordSchemeType) => {
+    vals = ChangePasswordScheme.parse(vals)
     return privateAxios.put('/api/v1.0/users/update_me', vals)
 }

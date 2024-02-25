@@ -8,6 +8,7 @@ import {
     DropdownTrigger,
     Input,
     Pagination,
+    Spacer,
     Spinner,
     Table,
     TableBody,
@@ -24,6 +25,7 @@ import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
 import { toastError, toastSuccess } from '@/utils'
+import Message from '@/components/message'
 
 const Users: FC = () => {
     const [search, setSearch] = useDebounceValue('', 300)
@@ -32,7 +34,7 @@ const Users: FC = () => {
 
     const queryClient = useQueryClient()
 
-    const { data, isFetching } = useQuery({
+    const { data, isFetching, isError, error } = useQuery({
         queryKey: ['users', { search, page, itemsPerPage }] as [
             string,
             { search: string; page: number; itemsPerPage: number },
@@ -78,7 +80,7 @@ const Users: FC = () => {
         },
     })
 
-    const cellRenderer = useCallback((v: usersService.User) => {
+    const cellRenderer = useCallback((v: usersService.UserSchemeType) => {
         return function cellRendererCallback(columnKey: Key) {
             const key = columnKey.toString() as keyof typeof v | 'user' | 'actions'
 
@@ -94,7 +96,7 @@ const Users: FC = () => {
                         <User
                             name={name}
                             avatarProps={{
-                                src: v.photo_path,
+                                src: v.photo_path ?? undefined,
                             }}
                             description={v.phone}
                         />
@@ -228,6 +230,15 @@ const Users: FC = () => {
                     </DropdownMenu>
                 </Dropdown>
             </div>
+
+            {isError ? (
+                error.name === 'ZodError' ? (
+                    <Message color="danger">Некорректные данные</Message>
+                ) : (
+                    <Message color="danger">Не удалось загрузить данные</Message>
+                )
+            ) : undefined}
+            {isError && <Spacer x={0} y={4} />}
 
             <Table aria-label="Таблица пользователей" bottomContent={bottomContent} bottomContentPlacement="outside">
                 <TableHeader>
