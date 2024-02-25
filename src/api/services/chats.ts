@@ -1,154 +1,83 @@
 import { DateTime } from 'luxon'
 import { privateAxios } from '@api/axios'
+import { z } from 'zod'
 
-export interface ShortChat {
-    id_chat: number
-    username: string
-    photo_path?: string
-    message?: {
-        msg: string
-        time: DateTime
-    }
-}
+export const ShortChatSchema = z.object({
+    id_chat: z.number(),
+    username: z.string().transform((s) => (s === '' ? 'Без имени' : s)),
+    photo_path: z.string().nullish(),
+    message: z
+        .object({
+            msg: z.string(),
+            time: z.number().transform((s) => DateTime.fromMillis(s)),
+        })
+        .nullable(),
+})
+export type ShortChatSchemaType = z.infer<typeof ShortChatSchema>
 
-export interface GetAllChatsData {
-    status: boolean
-    message: string
-    chats: ShortChat[]
-    total: number
-}
+export const ManyShortChatsSchema = z.object({
+    chats: ShortChatSchema.array(),
+    total: z.number(),
+})
+export type ManyShortChatsSchemaType = z.infer<typeof ManyShortChatsSchema>
 
 export const getAllChats = async (config: { offset: number; limit: number; search: string }) => {
-    interface SuccessResponse {
-        status: boolean
-        message: string
-        chats: {
-            id_chat: number
-            username: string
-            photo_path?: string
-            message?: {
-                msg: string
-                time: number
-            }
-        }[]
-        total: number
-    }
-
-    const response = await privateAxios.post<SuccessResponse>('/api/v1.0/chats/get_chats', {
+    const response = await privateAxios.post('/api/v1.0/chats/get_chats', {
         offset: config.offset,
         limit: config.limit,
         search: config.search,
     })
-
-    const chats: ShortChat[] = response.data.chats.map((c) => {
-        return {
-            ...c,
-            username: c.username || 'Без имени',
-            message: c.message
-                ? {
-                      msg: c.message.msg,
-                      time: DateTime.fromMillis(c.message.time),
-                  }
-                : undefined,
-        }
-    })
-    const data: GetAllChatsData = {
-        ...response.data,
-        chats,
-    }
-
+    const data = ManyShortChatsSchema.parse(response.data)
     return data
 }
 
-export interface GetChatData {
-    status: boolean
-    message: string
-    chat: {
-        id: number
-        reg_date: DateTime
-        last_messages: {
-            msg: string
-            msgType: number
-            timestamp_send: DateTime
-            isMe: boolean
-        }[]
-    }
-}
+export const ChatScheme = z.object({
+    id: z.number(),
+    reg_date: z.string().transform((s) => DateTime.fromISO(s)),
+    last_messages: z
+        .object({
+            msg: z.string(),
+            msgType: z.number(),
+            timestamp_send: z.number().transform((t) => DateTime.fromMillis(t)),
+            isMe: z.boolean(),
+        })
+        .array(),
+})
+export type ChatSchemeType = z.infer<typeof ChatScheme>
 
 export const GetChat = async (config: { id: number }) => {
-    interface SuccessResponse {
-        status: boolean
-        message: string
-        chat: {
-            id: number
-            reg_date: string
-            last_messages: {
-                msg: string
-                msgType: number
-                timestamp_send: number
-                isMe: boolean
-            }[]
-        }
-    }
-
-    const response = await privateAxios.post<SuccessResponse>('/api/v1.0/chats/get_chat', {
+    const scheme = z.object({
+        chat: ChatScheme,
+    })
+    const response = await privateAxios.post('/api/v1.0/chats/get_chat', {
         id: config.id,
     })
-
-    const data: GetChatData = {
-        ...response.data,
-        chat: {
-            ...response.data.chat,
-            reg_date: DateTime.fromISO(response.data.chat.reg_date),
-            last_messages: response.data.chat.last_messages.map((m) => ({
-                ...m,
-                timestamp_send: DateTime.fromMillis(m.timestamp_send),
-            })),
-        },
-    }
-
-    return data
+    const data = scheme.parse(response)
+    return data.chat
 }
 
-export interface GetMessagesData {
-    status: boolean
-    message: string
-    id_chat: number
-    messages: {
-        msg: string
-        msgType: number
-        timestamp_send: DateTime
-        isMe: boolean
-    }[]
-    total: number
-}
+export const ChatMessagesScheme = z.object({
+    id_chat: z.number(),
+    messages: z
+        .object({
+            msg: z.string(),
+            msgType: z.number(),
+            timestamp_send: z.number().transform((t) => DateTime.fromMillis(t)),
+            id_sender: z.number(),
+        })
+        .array(),
+    total: z.number(),
+})
+export type ChatMessagesSchemeType = z.infer<typeof ChatMessagesScheme>
+
 export const getMessages = async (config: { offset: number; limit: number; id_chat: number }) => {
-    interface SuccessResponse {
-        status: boolean
-        message: string
-        id_chat: number
-        messages: {
-            msg: string
-            msgType: number
-            timestamp_send: number
-            isMe: boolean
-        }[]
-        total: number
-    }
-
-    const response = await privateAxios.post<SuccessResponse>('/api/v1.0/chats/get_messages', {
+    const response = await privateAxios.post('/api/v1.0/chats/get_messages', {
         id_chat: config.id_chat,
         offset: config.offset,
         limit: config.limit,
     })
 
-    const data: GetMessagesData = {
-        ...response.data,
-        messages: response.data.messages.map((m) => ({
-            ...m,
-            timestamp_send: DateTime.fromMillis(m.timestamp_send),
-        })),
-    }
+    const data = ChatMessagesScheme.parse(response.data)
 
     return data
 }

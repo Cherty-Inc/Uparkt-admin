@@ -67,11 +67,8 @@ const Chat: FC<{
         select: (data) =>
             ({
                 ...data,
-                chat: {
-                    ...data.chat,
-                    last_messages: data.chat.last_messages.slice().reverse(),
-                },
-            }) satisfies chatsService.GetChatData,
+                last_messages: data.last_messages.slice().reverse(),
+            }) satisfies chatsService.ChatSchemeType,
     })
 
     const { data: me } = useQuery({
@@ -228,7 +225,7 @@ const Chat: FC<{
                                 )}
                                 {isSuccess && (
                                     <div className="flex flex-col gap-2 py-5">
-                                        {data?.chat.last_messages.map((m) => (
+                                        {data?.last_messages.map((m) => (
                                             <div
                                                 className={[
                                                     'w-fit max-w-[80%] rounded-xl px-3 py-2',
@@ -375,7 +372,7 @@ const Users: FC = () => {
                         id_chat={c.id_chat}
                         username={c.username}
                         msg={c.message?.msg}
-                        photo_path={c.photo_path}
+                        photo_path={c.photo_path ?? undefined}
                         time={c.message?.time}
                         key={c.id_chat}
                     />
