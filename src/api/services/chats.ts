@@ -52,7 +52,7 @@ export const GetChat = async (config: { id: number }) => {
     const response = await privateAxios.post('/api/v1.0/chats/get_chat', {
         id: config.id,
     })
-    const data = scheme.parse(response)
+    const data = scheme.parse(response.data)
     return data.chat
 }
 
