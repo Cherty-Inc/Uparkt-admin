@@ -386,7 +386,7 @@ const Users: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_dashboard/chats')({
+export const Route = createFileRoute('/_auth/_dashboard/chats')({
     component: Users,
     beforeLoad: () => ({
         title: 'Пользователи',

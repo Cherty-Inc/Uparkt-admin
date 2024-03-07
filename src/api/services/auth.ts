@@ -47,6 +47,15 @@ export const stopRevalidationProccess = () => {
     tokenRevalidationIntervalID = undefined
 }
 
+export const isAuthenticated = async () => {
+    try {
+        await revalidateToken()
+        return true
+    } catch {
+        return false
+    }
+}
+
 export const revalidateToken = async () => {
     interface SuccessResponse {
         status: true

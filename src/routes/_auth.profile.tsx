@@ -1,6 +1,5 @@
 import { FC } from 'react'
-import { Outlet, createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import * as authService from '@api/services/auth'
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import Topbar from '@/components/topbar'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
@@ -22,18 +21,6 @@ const ProfileLayout: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/profile')({
+export const Route = createFileRoute('/_auth/profile')({
     component: ProfileLayout,
-    beforeLoad: async () => {
-        const userData = await authService.getUserData()
-        const isAuthenticated = !!userData?.accessToken
-        if (!isAuthenticated) {
-            throw redirect({
-                to: '/login',
-                search: {
-                    redirect: location.pathname,
-                },
-            })
-        }
-    },
 })

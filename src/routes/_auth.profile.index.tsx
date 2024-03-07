@@ -199,6 +199,6 @@ const Index: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/profile/')({
+export const Route = createFileRoute('/_auth/profile/')({
     component: Index,
 })

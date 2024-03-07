@@ -1,7 +1,5 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import type { FC } from 'react'
-
-import * as authService from '@api/services/auth'
 
 import MyNavigation from '@components/my-navigation'
 import Topbar from '@/components/topbar'
@@ -22,18 +20,6 @@ const DashboardLayout: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_dashboard')({
+export const Route = createFileRoute('/_auth/_dashboard')({
     component: DashboardLayout,
-    beforeLoad: async () => {
-        const userData = await authService.getUserData()
-        const isAuthenticated = !!userData?.accessToken
-        if (!isAuthenticated) {
-            throw redirect({
-                to: '/login',
-                search: {
-                    redirect: location.pathname,
-                },
-            })
-        }
-    },
 })

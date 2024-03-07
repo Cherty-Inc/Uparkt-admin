@@ -257,7 +257,7 @@ const Users: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_dashboard/users')({
+export const Route = createFileRoute('/_auth/_dashboard/users')({
     component: Users,
     beforeLoad: () => ({
         title: 'Пользователи',

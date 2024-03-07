@@ -17,6 +17,6 @@ const Index: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_dashboard/')({
+export const Route = createFileRoute('/_auth/_dashboard/')({
     component: Index,
 })

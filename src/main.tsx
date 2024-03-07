@@ -11,8 +11,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './index.css'
 
-import { startRevalidationProccess } from '@api/services/auth'
-
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -34,8 +32,6 @@ i18next.init({
     },
 })
 z.setErrorMap(zodI18nMap)
-
-startRevalidationProccess()
 
 // Render the app
 const rootElement = document.getElementById('app')!
