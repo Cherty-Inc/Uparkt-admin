@@ -15,15 +15,13 @@ const validationSchema = z.object({
 })
 
 const LoginPage = () => {
-    const { redirect } = Route.useSearch()
     const loginMutation = useMutation({
         mutationFn: authService.login,
         onSuccess: () => {
             toastSuccess('Успешно')
-            const redirectTo = redirect || '/'
-            console.log({ redirectTo })
             router.navigate({
-                to: redirectTo,
+                to: '/',
+                replace: true,
             })
         },
         onError: () => {
@@ -103,6 +101,7 @@ export const Route = createFileRoute('/login')({
         if (userData) {
             router.navigate({
                 to: '/',
+                replace: true,
             })
         }
     },
