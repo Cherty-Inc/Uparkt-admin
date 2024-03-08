@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toastSuccess, toastError } from '@/utils'
 import { Icon } from '@iconify/react/dist/iconify.js'
+import { queries } from '@/api/queries'
 
 const CommonDataForm: FC = () => {
     const queryClient = useQueryClient()
@@ -27,7 +28,7 @@ const CommonDataForm: FC = () => {
         formState: { isLoading, isSubmitting },
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
-        defaultValues: () => queryClient.ensureQueryData({ queryKey: ['me'], queryFn: authService.getMe }),
+        defaultValues: () => queryClient.ensureQueryData(queries.me.detail),
     })
 
     const { mutateAsync } = useMutation({
@@ -43,7 +44,7 @@ const CommonDataForm: FC = () => {
     const onSubmit = handleSubmit(async (data) => {
         await mutateAsync(data)
         await queryClient.invalidateQueries({
-            queryKey: ['me'],
+            queryKey: queries.me._def,
         })
     })
 
@@ -128,7 +129,7 @@ const ChangePasswordForm: FC = () => {
     const onSubmit = handleSubmit(async (data) => {
         await mutateAsync(data)
         await queryClient.invalidateQueries({
-            queryKey: ['me'],
+            queryKey: queries.me._def,
         })
     })
 

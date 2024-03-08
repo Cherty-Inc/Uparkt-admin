@@ -24,6 +24,7 @@ import { useState, type FC, Key, useCallback, useMemo, type ReactNode } from 're
 import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
+import { queries } from '@api/queries'
 import { toastError, toastSuccess } from '@/utils'
 import Message from '@/components/message'
 
@@ -35,22 +36,7 @@ const Users: FC = () => {
     const queryClient = useQueryClient()
 
     const { data, isFetching, isError, error } = useQuery({
-        queryKey: ['users', { search, page, itemsPerPage }] as [
-            string,
-            { search: string; page: number; itemsPerPage: number },
-        ],
-        queryFn: async ({ queryKey }) => {
-            const config = queryKey[1]
-            const users = await usersService.getAllUsers({
-                search: config.search,
-                limit: config.itemsPerPage,
-                offset: config.itemsPerPage * (config.page - 1),
-                sort: 0,
-                statuses: [],
-            })
-            users.total = Math.ceil(users.total / config.itemsPerPage)
-            return users
-        },
+        ...queries.users.list({ search, page, itemsPerPage }),
         placeholderData: (v) => v,
     })
 
@@ -59,7 +45,7 @@ const Users: FC = () => {
         onSuccess: (_, id) => {
             toastSuccess(`Пользователь с ID ${id} заблокирован`)
             queryClient.invalidateQueries({
-                queryKey: ['users'],
+                queryKey: queries.users._def,
             })
         },
         onError: () => {
@@ -72,7 +58,7 @@ const Users: FC = () => {
         onSuccess: (_, id) => {
             toastSuccess(`Пользователь с ID ${id} удалён`)
             queryClient.invalidateQueries({
-                queryKey: ['users'],
+                queryKey: queries.users._def,
             })
         },
         onError: () => {
@@ -203,7 +189,7 @@ const Users: FC = () => {
                     variant="flat"
                     size="lg"
                     isDisabled={isFetching}
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ['users'] })}
+                    onClick={() => queryClient.invalidateQueries({ queryKey: queries.users._def })}
                 >
                     <Icon icon="tabler:refresh" className="size-4" />
                 </Button>

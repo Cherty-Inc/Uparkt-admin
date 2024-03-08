@@ -20,6 +20,7 @@ import * as authService from '@api/services/auth'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import MyNavigation from './my-navigation'
 import { useDarkMode } from 'usehooks-ts'
+import { queries } from '@/api/queries'
 
 const Topbar: FC<{
     showLogo?: boolean
@@ -28,10 +29,7 @@ const Topbar: FC<{
     const navigate = useNavigate()
     const { set: setIsDarkMode, isDarkMode } = useDarkMode()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
-    const { data: me } = useQuery({
-        queryKey: ['me'],
-        queryFn: authService.getMe,
-    })
+    const { data: me } = useQuery(queries.me.detail)
 
     const logout = async () => {
         await authService.logout()

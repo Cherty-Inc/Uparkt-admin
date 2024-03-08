@@ -27,7 +27,7 @@ import { useDarkMode, useDebounceValue } from 'usehooks-ts'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
 import * as chatsService from '@api/services/chats'
-import * as authService from '@api/services/auth'
+import { queries } from '@/api/queries'
 
 import { DateTime } from 'luxon'
 
@@ -61,8 +61,7 @@ const Chat: FC<{
     >([])
 
     const { data, isLoading, isSuccess } = useQuery({
-        queryKey: ['chats', { id: id_chat }] satisfies [string, { id: number }],
-        queryFn: ({ queryKey }) => chatsService.GetChat(queryKey[1]),
+        ...queries.chats.one({ id: id_chat }),
         enabled: isChatOpen,
         select: (data) =>
             ({
@@ -71,10 +70,7 @@ const Chat: FC<{
             }) satisfies chatsService.ChatSchemeType,
     })
 
-    const { data: me } = useQuery({
-        queryKey: ['me'],
-        queryFn: authService.getMe,
-    })
+    const { data: me } = useQuery(queries.me.detail)
 
     const { lastJsonMessage, sendJsonMessage, readyState } = useWebSocket<{
         id_chat: number
@@ -185,7 +181,7 @@ const Chat: FC<{
                 isOpen={isChatOpen}
                 onClose={() =>
                     queryClient.invalidateQueries({
-                        queryKey: ['chats'],
+                        queryKey: queries.chats._def,
                     })
                 }
                 onOpenChange={setIsChatOpen}
@@ -301,21 +297,7 @@ const Users: FC = () => {
     const queryClient = useQueryClient()
 
     const { data, isFetching } = useQuery({
-        queryKey: ['chats', { search, page, itemsPerPage }] as [
-            string,
-            { search: string; page: number; itemsPerPage: number },
-        ],
-        queryFn: async ({ queryKey }) => {
-            const config = queryKey[1]
-
-            const chats = await chatsService.getAllChats({
-                search: config.search,
-                limit: config.itemsPerPage,
-                offset: config.itemsPerPage * (config.page - 1),
-            })
-            chats.total = Math.ceil(chats.total / config.itemsPerPage)
-            return chats
-        },
+        ...queries.chats.list({ search, page, itemsPerPage }),
         placeholderData: (v) => v,
     })
 
@@ -338,7 +320,7 @@ const Users: FC = () => {
                     variant="flat"
                     size="lg"
                     isDisabled={isFetching}
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ['chats'] })}
+                    onClick={() => queryClient.invalidateQueries({ queryKey: queries.chats._def })}
                 >
                     <Icon icon="tabler:refresh" className="size-4" />
                 </Button>

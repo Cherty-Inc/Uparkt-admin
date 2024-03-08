@@ -22,6 +22,7 @@
         "@emoji-mart/data": "^1.1.2",
         "@emoji-mart/react": "^1.1.1",
         "@hookform/resolvers": "^3.3.4",
+        "@lukemorales/query-key-factory": "^1.3.4",
         "@nextui-org/react": "2.2.9",
         "@tanstack/react-query": "^5.25.0",
         "@tanstack/react-query-devtools": "^5.25.0",
