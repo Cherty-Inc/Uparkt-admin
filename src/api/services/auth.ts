@@ -49,7 +49,7 @@ export const stopRevalidationProccess = () => {
 
 export const isAuthenticated = async () => {
     try {
-        await revalidateToken()
+        await getMe()
         return true
     } catch {
         return false
