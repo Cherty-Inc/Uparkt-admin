@@ -11,7 +11,7 @@ const Index: FC = () => {
         <>
             <div>HOME</div>
             <Button color="danger" variant="shadow" size="lg" onClick={onClick}>
-                НЕ ТРОЖЬ
+                НЕ ТРОЖЬ БОБЭР
             </Button>
         </>
     )
