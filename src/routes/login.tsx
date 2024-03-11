@@ -104,5 +104,9 @@ export const Route = createFileRoute('/login')({
                 replace: true,
             })
         }
+
+        return {
+            title: '',
+        }
     },
 })

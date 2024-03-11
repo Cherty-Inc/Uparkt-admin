@@ -10,6 +10,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './index.css'
+import localforage from 'localforage'
+import { startRevalidationProccess } from '@api/services/auth'
+
+localforage.config({
+    driver: localforage.LOCALSTORAGE,
+})
+
+startRevalidationProccess()
 
 const queryClient = new QueryClient({
     defaultOptions: {

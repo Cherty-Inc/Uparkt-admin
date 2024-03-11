@@ -5,12 +5,14 @@ export const Route = createFileRoute('/_auth')({
     component: () => <Outlet />,
     beforeLoad: async () => {
         const isAuthenticated = await authService.isAuthenticated()
-        if (isAuthenticated) {
-            authService.startRevalidationProccess()
-        } else {
+        if (!isAuthenticated) {
             throw redirect({
                 to: '/login',
             })
+        }
+
+        return {
+            title: '',
         }
     },
 })

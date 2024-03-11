@@ -23,4 +23,9 @@ const ProfileLayout: FC = () => {
 
 export const Route = createFileRoute('/_auth/profile')({
     component: ProfileLayout,
+    beforeLoad: () => {
+        return {
+            title: '',
+        }
+    },
 })
