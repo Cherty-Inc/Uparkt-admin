@@ -28,12 +28,9 @@ privateAxios.interceptors.request.use(
 privateAxios.interceptors.response.use(
     (res) => res,
     async (err) => {
-        const originalConfig = err.config
         if (err.response) {
-            if ((err.response.status === 403 || err.response.status === 401) && !originalConfig._retry) {
-                originalConfig._retry = true
-                console.warn('Надо обновить токены доступа, но рефреша нету - выкидываем пользователя')
-                router.navigate({
+            if (err.response.status === 403 || err.response.status === 401) {
+                await router.navigate({
                     to: '/login',
                 })
             }
