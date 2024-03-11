@@ -23,6 +23,33 @@ export const ManyUsersScheme = z.object({
 })
 export type ManyUsersSchemeType = z.infer<typeof ManyUsersScheme>
 
+export const UserDetailsScheme = z.object({
+    id: z.number(),
+    token: z.string().min(1),
+    name: z.string().nullable(),
+    surname: z.string().nullable(),
+    phone: z.string().nullable(),
+    email: z.string().nullable(),
+    role: z.string().array(),
+    date_reg: z.string().transform((s) => DateTime.fromISO(s)),
+    photo_path: z.string().optional(),
+    balance: z.number(),
+})
+export type MeSchemeType = z.infer<typeof UserDetailsScheme>
+
+export const getUser = async (userID: string | number) => {
+    const scheme = z.object({
+        me: UserDetailsScheme,
+    })
+    const response = await privateAxios.get('/api/v1.0/users/get_me', {
+        params: {
+            id_user: userID,
+        },
+    })
+    const data = scheme.parse(response.data).me
+    return data
+}
+
 export const getAllUsers = async (config: {
     search: string
     sort: number

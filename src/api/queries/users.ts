@@ -16,4 +16,10 @@ export const users = createQueryKeys('users', {
             return users
         },
     }),
+    user: (userID: string | number) => ({
+        queryKey: [{ userID: userID.toString() }],
+        queryFn: () => {
+            return usersService.getUser(userID)
+        },
+    }),
 })

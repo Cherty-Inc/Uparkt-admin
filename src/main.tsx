@@ -18,7 +18,7 @@ localforage.config({
     driver: localforage.LOCALSTORAGE,
 })
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             staleTime: 15 * 60 * 1000, // 15 minutes
