@@ -40,11 +40,6 @@ i18next.init({
 })
 z.setErrorMap(zodI18nMap)
 
-const userData = await authService.getUserData()
-if (userData) {
-    await authService.revalidateToken()
-}
-
 const render = async () => {
     const userData = await authService.getUserData()
     if (userData) {
