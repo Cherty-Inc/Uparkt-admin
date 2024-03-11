@@ -6,6 +6,7 @@ export const Route = createFileRoute('/_auth')({
     beforeLoad: async () => {
         const isAuthenticated = await authService.isAuthenticated()
         if (!isAuthenticated) {
+            await authService.resetUserData()
             throw redirect({
                 to: '/login',
             })
