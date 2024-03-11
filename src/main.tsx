@@ -40,19 +40,21 @@ i18next.init({
 })
 z.setErrorMap(zodI18nMap)
 
-authService.revalidateToken().finally(() => {
-    const rootElement = document.getElementById('app')!
-    if (!rootElement.innerHTML) {
-        const root = ReactDOM.createRoot(rootElement)
-        root.render(
-            <StrictMode>
-                <QueryClientProvider client={queryClient}>
-                    <NextUIProvider>
-                        <RouterProvider router={router} />
-                    </NextUIProvider>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                </QueryClientProvider>
-            </StrictMode>,
-        )
-    }
-})
+const userData = await authService.getUserData()
+if (userData) {
+    await authService.revalidateToken()
+}
+const rootElement = document.getElementById('app')!
+if (!rootElement.innerHTML) {
+    const root = ReactDOM.createRoot(rootElement)
+    root.render(
+        <StrictMode>
+            <QueryClientProvider client={queryClient}>
+                <NextUIProvider>
+                    <RouterProvider router={router} />
+                </NextUIProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+        </StrictMode>,
+    )
+}

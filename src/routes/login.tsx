@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { z } from 'zod'
 
 import * as authService from '@api/services/auth'
@@ -97,11 +97,10 @@ export const Route = createFileRoute('/login')({
         redirect: z.string().optional(),
     }),
     beforeLoad: async () => {
-        const userData = await authService.getUserData()
-        if (userData) {
-            router.navigate({
+        const isAuthenticated = await authService.isAuthenticated()
+        if (isAuthenticated) {
+            throw redirect({
                 to: '/',
-                replace: true,
             })
         }
 

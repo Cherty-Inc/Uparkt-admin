@@ -18,6 +18,10 @@ export const getUserData = async () => {
 }
 
 export const isAuthenticated = async () => {
+    const userData = await getUserData()
+    if (!userData) {
+        return false
+    }
     try {
         await getMe()
         return true
