@@ -23,7 +23,7 @@ const DashboardLayout: FC = () => {
             <div className="md:pl-64">
                 <Topbar />
                 <div className="p-4 md:p-8">
-                    <div className="mb-4 flex items-center gap-2">
+                    <div className="mb-4 flex flex-wrap items-center gap-x-2">
                         {breadcrumbs.map((b) => (
                             <Fragment key={b.pathname}>
                                 <Link className="opacity-75 last-of-type:opacity-100" to={b.pathname}>
