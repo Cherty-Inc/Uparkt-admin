@@ -23,7 +23,11 @@ export const isAuthenticated = async () => {
         return false
     }
     try {
-        await getMe()
+        await privateAxios.get('/api/v1.0/users/get_me', {
+            params: {
+                intention: 'check_auth',
+            },
+        })
         return true
     } catch {
         return false
