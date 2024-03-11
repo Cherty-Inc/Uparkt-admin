@@ -9,15 +9,14 @@ import translation from 'zod-i18n-map/locales/ru/zod.json'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
+import * as authService from '@api/services/auth'
+
 import './index.css'
 import localforage from 'localforage'
-import { startRevalidationProccess } from '@api/services/auth'
 
 localforage.config({
     driver: localforage.LOCALSTORAGE,
 })
-
-startRevalidationProccess()
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -41,18 +40,19 @@ i18next.init({
 })
 z.setErrorMap(zodI18nMap)
 
-// Render the app
-const rootElement = document.getElementById('app')!
-if (!rootElement.innerHTML) {
-    const root = ReactDOM.createRoot(rootElement)
-    root.render(
-        <StrictMode>
-            <QueryClientProvider client={queryClient}>
-                <NextUIProvider>
-                    <RouterProvider router={router} />
-                </NextUIProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-        </StrictMode>,
-    )
-}
+authService.revalidateToken().finally(() => {
+    const rootElement = document.getElementById('app')!
+    if (!rootElement.innerHTML) {
+        const root = ReactDOM.createRoot(rootElement)
+        root.render(
+            <StrictMode>
+                <QueryClientProvider client={queryClient}>
+                    <NextUIProvider>
+                        <RouterProvider router={router} />
+                    </NextUIProvider>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
+            </StrictMode>,
+        )
+    }
+})

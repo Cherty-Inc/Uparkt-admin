@@ -4,8 +4,6 @@ import { md5 } from 'js-md5'
 import { DateTime } from 'luxon'
 import { z } from 'zod'
 
-let tokenRevalidationIntervalID: ReturnType<typeof setInterval> | undefined
-
 export interface TUserData {
     accessToken: string | null
 }
@@ -17,34 +15,6 @@ export const saveUserData = async (data: TUserData) => {
 }
 export const getUserData = async () => {
     return await localforage.getItem<TUserData>('user_data')
-}
-
-export const startRevalidationProccess = async () => {
-    console.log('starting revalidation process')
-    if (tokenRevalidationIntervalID) {
-        console.log('found old token revalidation interval id - clearing')
-        clearInterval(tokenRevalidationIntervalID)
-    }
-    const userData = await getUserData()
-    if (userData?.accessToken) {
-        try {
-            console.log('attempt to revalidate already existed token')
-            await revalidateToken()
-        } catch {
-            console.log('already existed token revalidation failed - logout')
-            return
-        }
-        tokenRevalidationIntervalID = setInterval(revalidateToken, 12 * 60 * 60 * 1000)
-        console.log('started revalidation process')
-    } else {
-        console.log('access token not found locally - revalidation proccess not started')
-    }
-}
-
-export const stopRevalidationProccess = () => {
-    console.log('stopping revalidation proccess')
-    clearInterval(tokenRevalidationIntervalID)
-    tokenRevalidationIntervalID = undefined
 }
 
 export const isAuthenticated = async () => {
@@ -95,9 +65,7 @@ export const login = async (vars: { login: string; password: string; fbid?: stri
 
     if (response.data.status) {
         await saveUserData({ accessToken: response.data.token })
-        await startRevalidationProccess()
     } else {
-        stopRevalidationProccess()
         throw new Error('Не удалось залогиниться, ' + JSON.stringify(response.data))
     }
 
@@ -122,7 +90,6 @@ export const logout = async () => {
             console.log('access token is too old. POST /api/v1.0/auth/logout request failed')
         }
     }
-    stopRevalidationProccess()
     resetUserData()
 }
 
