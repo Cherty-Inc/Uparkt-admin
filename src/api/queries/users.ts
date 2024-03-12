@@ -40,6 +40,12 @@ export const users = createQueryKeys('users', {
                     return users
                 },
             }),
+            parkings: {
+                queryKey: null,
+                queryFn: () => {
+                    return usersService.getUsersParkings(userID)
+                },
+            },
         },
     }),
 })

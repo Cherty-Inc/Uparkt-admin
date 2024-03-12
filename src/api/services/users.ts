@@ -126,3 +126,29 @@ export const getUsersCars = async (config: { id_user: string | number; offset: n
     const data = ManyUserCarsScheme.parse(response.data)
     return data
 }
+
+export const UserParkingScheme = z.object({
+    id: z.number(),
+    name: z.string(),
+    price: z.number(),
+    address: z.string(),
+    photo: z.string(),
+    date: z.string().transform((s) => DateTime.fromISO(s)),
+    isActive: z.boolean(),
+})
+export type UserParkingSchemeType = z.infer<typeof UserParkingScheme>
+
+export const ManyUserParkingsScheme = z.object({
+    parkings: UserParkingScheme.array(),
+})
+export type ManyUserParkingsScheme = z.infer<typeof ManyUserParkingsScheme>
+
+export const getUsersParkings = async (userID: string | number) => {
+    const response = await privateAxios.get('/api/v1.0/orders/parkings', {
+        params: {
+            id_user: userID,
+        },
+    })
+    const data = ManyUserParkingsScheme.parse(response.data)
+    return data
+}

@@ -12,6 +12,7 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Image,
     Pagination,
     Selection,
     Spacer,
@@ -204,6 +205,124 @@ const Cars = () => {
     )
 }
 
+const Parkings = () => {
+    const userID = useParams({
+        from: '/_auth/_dashboard/users/$id',
+        select: (p) => p.id,
+    })
+    const { data: user } = useQuery(queries.users.user(userID))
+    const { data, isError, error, isFetching } = useQuery(queries.users.user(userID)._ctx.parkings)
+
+    const cellRenderer = useCallback((v: usersService.UserParkingSchemeType) => {
+        return function cellRendererCallback(columnKey: Key) {
+            const key = columnKey.toString() as keyof typeof v | 'actions'
+
+            let cellContent: ReactNode
+
+            switch (key) {
+                case 'photo': {
+                    cellContent = <Image isZoomed src={v.photo} className="h-24 w-auto" />
+                    break
+                }
+                case 'date': {
+                    cellContent = v.date.toFormat('dd.MM.yyyy')
+                    break
+                }
+                case 'price': {
+                    cellContent = v.price + ' ₽'
+                    break
+                }
+                case 'isActive': {
+                    if (v.isActive) {
+                        cellContent = (
+                            <Chip variant="flat" color="success">
+                                Активна
+                            </Chip>
+                        )
+                    } else {
+                        cellContent = (
+                            <Chip variant="flat" color="danger">
+                                Не активна
+                            </Chip>
+                        )
+                    }
+                    break
+                }
+                case 'actions': {
+                    cellContent = (
+                        <div className="relative flex items-center justify-end gap-2">
+                            <Dropdown placement="bottom-end">
+                                <DropdownTrigger>
+                                    <Button isIconOnly size="sm" variant="light">
+                                        <Icon icon="tabler:dots-vertical" className="size-6 text-default-400" />
+                                    </Button>
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Действия">
+                                    <DropdownItem aria-label="Изменить" color="warning" variant="flat">
+                                        Изменить
+                                    </DropdownItem>
+                                    <DropdownItem aria-label="Удалить" color="danger" variant="flat">
+                                        Удалить
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    )
+                    break
+                }
+                default: {
+                    cellContent = v[key]
+                    break
+                }
+            }
+
+            return (
+                <TableCell>
+                    <div className="min-w-max">{cellContent}</div>
+                </TableCell>
+            )
+        }
+    }, [])
+
+    return (
+        <>
+            {isError ? (
+                error.name === 'ZodError' ? (
+                    <Message color="danger">Некорректные данные</Message>
+                ) : (
+                    <Message color="danger">Не удалось загрузить данные</Message>
+                )
+            ) : undefined}
+            {isError && <Spacer x={0} y={4} />}
+
+            <Table
+                aria-label={`Таблица транзакций пользователя ${[user?.name, user?.surname].join(' ')} ID: ${userID}`}
+                removeWrapper
+            >
+                <TableHeader>
+                    <TableColumn key="id">ID</TableColumn>
+                    <TableColumn key="photo">ФОТО</TableColumn>
+                    <TableColumn key="name">НАЗВАНИЕ</TableColumn>
+                    <TableColumn key="date">ДАТА</TableColumn>
+                    <TableColumn key="price">СТОИМОСТЬ</TableColumn>
+                    <TableColumn key="address">АДРЕС</TableColumn>
+                    <TableColumn key="isActive">Статус</TableColumn>
+                    <TableColumn key="actions" className="text-end">
+                        ДЕЙСТВИЯ
+                    </TableColumn>
+                </TableHeader>
+                <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
+                    {data?.parkings.map((v, index) => (
+                        <TableRow className="cursor-pointer" key={`${index}`}>
+                            {cellRenderer(v)}
+                        </TableRow>
+                    )) || []}
+                </TableBody>
+            </Table>
+        </>
+    )
+}
+
 const UserDetails: FC = () => {
     const userID = useParams({
         from: '/_auth/_dashboard/users/$id',
@@ -258,6 +377,9 @@ const UserDetails: FC = () => {
                         </AccordionItem>
                         <AccordionItem key="cars" aria-label="Автомобили" title="Автомобили">
                             <Cars />
+                        </AccordionItem>
+                        <AccordionItem key="parkings" aria-label="Парковки" title="Парковки">
+                            <Parkings />
                         </AccordionItem>
                     </Accordion>
                 </>
