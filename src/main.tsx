@@ -24,9 +24,9 @@ export const queryClient = new QueryClient({
             staleTime: 15 * 60 * 1000, // 15 minutes
             refetchOnReconnect: true,
             refetchOnWindowFocus: true,
-            retry: (_, error) => {
+            retry: (failureCount, error) => {
                 console.error(error)
-                return error.name !== 'ZodError'
+                return error.name !== 'ZodError' && failureCount < 2
             },
         },
     },
