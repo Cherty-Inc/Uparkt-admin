@@ -37,8 +37,8 @@ const Transactions = () => {
         from: '/_dashboard/users/$user_id',
         select: (p) => p.user_id,
     })
-    const { data: user } = useQuery(queries.users.user(userID))
-    const { data, isError, error, isFetching } = useQuery(queries.users.user(userID)._ctx.money)
+    const { data: user } = useQuery(queries.users.one(userID))
+    const { data, isError, error, isFetching } = useQuery(queries.users.one(userID)._ctx.money)
 
     const cellRenderer = useCallback((v: usersService.UserMoneyTransactionSchemeType) => {
         return function cellRendererCallback(columnKey: Key) {
@@ -110,9 +110,9 @@ const Cars = () => {
     const [page, setPage] = useState(1)
     const [itemsPerPage] = useState(10)
 
-    const { data: user } = useQuery(queries.users.user(userID))
+    const { data: user } = useQuery(queries.users.one(userID))
     const { data, isFetching, isError, error } = useQuery({
-        ...queries.users.user(userID)._ctx.cars({ page, itemsPerPage }),
+        ...queries.users.one(userID)._ctx.cars._ctx.list({ page, itemsPerPage }),
         placeholderData: (v) => v,
     })
     const navigate = useNavigate()
@@ -230,8 +230,8 @@ const Parkings = () => {
         from: '/_dashboard/users/$user_id',
         select: (p) => p.user_id,
     })
-    const { data: user } = useQuery(queries.users.user(userID))
-    const { data, isError, error, isFetching } = useQuery(queries.users.user(userID)._ctx.parkings)
+    const { data: user } = useQuery(queries.users.one(userID))
+    const { data, isError, error, isFetching } = useQuery(queries.users.one(userID)._ctx.parkings)
 
     const cellRenderer = useCallback((v: usersService.UserParkingSchemeType) => {
         return function cellRendererCallback(columnKey: Key) {
@@ -368,7 +368,7 @@ const UserDetails: FC = () => {
     }
 
     const { data, isError } = useQuery({
-        ...queries.users.user(userID),
+        ...queries.users.one(userID),
     })
 
     return (
@@ -432,7 +432,7 @@ export const Route = createFileRoute('/_dashboard/users/$user_id/')({
     }),
     beforeLoad: async ({ params }) =>
         authenticated(async () => {
-            await queryClient.fetchQuery(queries.users.user(params.user_id))
+            await queryClient.fetchQuery(queries.users.one(params.user_id))
             return {
                 title: '',
             }

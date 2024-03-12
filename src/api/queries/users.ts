@@ -16,7 +16,7 @@ export const users = createQueryKeys('users', {
             return users
         },
     }),
-    user: (userID: string | number) => ({
+    one: (userID: string | number) => ({
         queryKey: [{ userID: userID.toString() }],
         queryFn: () => {
             return usersService.getUser(userID)
@@ -28,24 +28,29 @@ export const users = createQueryKeys('users', {
                     return usersService.getUsersMoney(userID)
                 },
             },
-            cars: (filters: { page: number; itemsPerPage: number }) => ({
-                queryKey: [{ filters }],
-                queryFn: async () => {
-                    const users = await usersService.getUsersCars({
-                        id_user: userID,
-                        limit: filters.itemsPerPage,
-                        offset: filters.itemsPerPage * (filters.page - 1),
-                    })
-                    users.total = Math.ceil(users.total / filters.itemsPerPage)
-                    return users
+            cars: {
+                queryKey: null,
+                contextQueries: {
+                    list: (filters: { page: number; itemsPerPage: number }) => ({
+                        queryKey: [{ filters }],
+                        queryFn: async () => {
+                            const users = await usersService.getUsersCars({
+                                id_user: userID,
+                                limit: filters.itemsPerPage,
+                                offset: filters.itemsPerPage * (filters.page - 1),
+                            })
+                            users.total = Math.ceil(users.total / filters.itemsPerPage)
+                            return users
+                        },
+                    }),
+                    one: (carID: string | number) => ({
+                        queryKey: [{ carID }],
+                        queryFn: () => {
+                            return usersService.getUsersCarDetails({ userID, carID })
+                        },
+                    }),
                 },
-            }),
-            car: (carID: string | number) => ({
-                queryKey: [{ carID }],
-                queryFn: () => {
-                    return usersService.getUsersCarDetails({ userID, carID })
-                },
-            }),
+            },
             parkings: {
                 queryKey: null,
                 queryFn: () => {

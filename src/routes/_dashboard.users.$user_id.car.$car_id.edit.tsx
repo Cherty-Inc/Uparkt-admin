@@ -12,7 +12,7 @@ const UserDetails: FC = () => {
         from: '/_dashboard/users/$user_id/car/$car_id/edit',
     })
 
-    const { data, isError } = useQuery(queries.users.user(userID)._ctx.car(carID))
+    const { data, isError } = useQuery(queries.users.one(userID)._ctx.cars._ctx.one(carID))
 
     return (
         <>
@@ -31,7 +31,9 @@ export const Route = createFileRoute('/_dashboard/users/$user_id/car/$car_id/edi
     component: UserDetails,
     beforeLoad: async ({ params }) =>
         authenticated(async () => {
-            const data = await queryClient.fetchQuery(queries.users.user(params.user_id)._ctx.car(params.car_id))
+            const data = await queryClient.fetchQuery(
+                queries.users.one(params.user_id)._ctx.cars._ctx.one(params.car_id),
+            )
             return {
                 title: data.name,
             }
