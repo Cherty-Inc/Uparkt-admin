@@ -398,6 +398,7 @@ const UserDetails: FC = () => {
             search: {
                 view: Array.from(keys).map((k) => k.toString()),
             },
+            replace: true,
         })
     }
 
