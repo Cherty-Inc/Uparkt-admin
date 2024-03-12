@@ -12,8 +12,8 @@ const ProfileLayout: FC = () => {
     return (
         <div>
             <Topbar showLogo />
-            <div className="container mx-auto p-4">
-                <div className="my-4">
+            <div className="container mx-auto my-4 px-4">
+                <div className="my-4 md:hidden">
                     <MyBreadcrumbs />
                 </div>
                 <Button className="flex items-center leading-none" variant="flat" onClick={() => navigate({ to: '/' })}>

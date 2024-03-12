@@ -13,10 +13,12 @@ const DashboardLayout: FC = () => {
             </aside>
             <div className="md:pl-64">
                 <Topbar />
-                <div className="p-4 md:p-8">
-                    <div className="mb-4 flex flex-wrap items-center gap-x-2">
-                        <MyBreadcrumbs />
-                    </div>
+
+                <div className="m-4 md:hidden">
+                    <MyBreadcrumbs />
+                </div>
+
+                <div className="m-4 md:m-8">
                     <Outlet />
                 </div>
             </div>

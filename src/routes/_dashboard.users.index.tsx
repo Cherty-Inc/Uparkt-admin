@@ -210,7 +210,7 @@ const Users: FC = () => {
 
     return (
         <>
-            <h1 className="mb-4 mt-8 text-2xl font-semibold">Пользователи</h1>
+            <h1 className="mb-4 mt-16 text-2xl font-semibold">Пользователи</h1>
             <div className="flex items-center justify-between gap-x-4 gap-y-3">
                 <Input
                     className="shrink grow transition-all focus-within:grow md:w-72 md:grow-0"

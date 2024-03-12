@@ -21,6 +21,7 @@ import { Icon } from '@iconify/react/dist/iconify.js'
 import MyNavigation from './my-navigation'
 import { useDarkMode } from 'usehooks-ts'
 import { queries } from '@/api/queries'
+import MyBreadcrumbs from './my-breadcrumbs'
 
 const Topbar: FC<{
     showLogo?: boolean
@@ -86,6 +87,9 @@ const Topbar: FC<{
                     </Dropdown>
                 </div>
                 <div className="grow"></div>
+                <div className="hidden md:block">
+                    <MyBreadcrumbs />
+                </div>
                 {props.showLogo && (
                     <Image
                         draggable={false}
