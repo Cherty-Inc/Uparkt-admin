@@ -82,3 +82,47 @@ export const deleteUser = async (id: number) => {
     })
     return response.data
 }
+
+export const UserMoneyTransactionScheme = z.object({
+    title: z.string(),
+    amount: z.number(),
+    description: z.number(),
+})
+export type UserMoneyTransactionSchemeType = z.infer<typeof UserMoneyTransactionScheme>
+
+export const UserMoneyScheme = z.object({
+    balance: z.number(),
+    history: UserMoneyTransactionScheme.array(),
+})
+export type UserMoneySchemeType = z.infer<typeof UserMoneyScheme>
+
+export const getUsersMoney = async (id_user: string | number) => {
+    const response = await privateAxios.post('/api/v1.0/users/money', {
+        id_user: id_user.toString(),
+    })
+    const data = UserMoneyScheme.parse(response.data)
+    return data
+}
+
+export const UserCarScheme = z.object({
+    id: z.number(),
+    name: z.string(),
+    number: z.string(),
+})
+export type UserCarSchemeType = z.infer<typeof UserCarScheme>
+
+export const ManyUserCarsScheme = z.object({
+    cars: UserCarScheme.array(),
+    total: z.number(),
+})
+export type ManyUserCarsScheme = z.infer<typeof ManyUserCarsScheme>
+
+export const getUsersCars = async (config: { id_user: string | number; offset: number; limit: number }) => {
+    const response = await privateAxios.post('/api/v1.0/orders/cars', {
+        id_user: config.id_user.toString(),
+        offset: config.offset,
+        limit: config.limit,
+    })
+    const data = ManyUserCarsScheme.parse(response.data)
+    return data
+}

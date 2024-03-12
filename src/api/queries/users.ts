@@ -21,5 +21,25 @@ export const users = createQueryKeys('users', {
         queryFn: () => {
             return usersService.getUser(userID)
         },
+        contextQueries: {
+            money: {
+                queryKey: null,
+                queryFn: () => {
+                    return usersService.getUsersMoney(userID)
+                },
+            },
+            cars: (filters: { page: number; itemsPerPage: number }) => ({
+                queryKey: [{ filters }],
+                queryFn: async () => {
+                    const users = await usersService.getUsersCars({
+                        id_user: userID,
+                        limit: filters.itemsPerPage,
+                        offset: filters.itemsPerPage * (filters.page - 1),
+                    })
+                    users.total = Math.ceil(users.total / filters.itemsPerPage)
+                    return users
+                },
+            }),
+        },
     }),
 })
