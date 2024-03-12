@@ -10,6 +10,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toastSuccess, toastError } from '@/utils'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { queries } from '@/api/queries'
+import { authenticated } from '@/router'
+import { queryClient } from '@/main'
 
 const CommonDataForm: FC = () => {
     const queryClient = useQueryClient()
@@ -200,11 +202,13 @@ const Index: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/profile/')({
+export const Route = createFileRoute('/profile/')({
     component: Index,
-    beforeLoad: () => {
-        return {
-            title: '',
-        }
-    },
+    beforeLoad: () =>
+        authenticated(async () => {
+            await queryClient.fetchQuery(queries.me.detail)
+            return {
+                title: '',
+            }
+        }),
 })

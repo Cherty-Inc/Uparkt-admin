@@ -31,7 +31,7 @@ const DashboardLayout: FC = () => {
                             onAction={(key) =>
                                 navigate({
                                     to: key.toString(),
-                                })
+                                } as any)
                             }
                         >
                             {breadcrumbs.map((b) => (
@@ -51,11 +51,9 @@ const DashboardLayout: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/_dashboard')({
+export const Route = createFileRoute('/_dashboard')({
     component: DashboardLayout,
-    beforeLoad: () => {
-        return {
-            title: 'Дашборд',
-        }
-    },
+    beforeLoad: () => ({
+        title: 'Дашборд',
+    }),
 })

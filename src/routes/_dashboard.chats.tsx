@@ -21,8 +21,8 @@ import {
     Spinner,
 } from '@nextui-org/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { useState, type FC, useMemo, useEffect, useRef, useLayoutEffect } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState, type FC, useMemo, useEffect, useRef, useLayoutEffect, useCallback } from 'react'
 import { useDarkMode, useDebounceValue } from 'usehooks-ts'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
@@ -37,6 +37,9 @@ import EmojiMartI18N from '@emoji-mart/data/i18n/ru.json'
 
 import _LinesEllipsis from 'react-lines-ellipsis'
 import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
+import { authenticated } from '@/router'
+import { queryClient } from '@/main'
+import { z } from 'zod'
 
 const LinesEllipsis = responsiveHOC()(_LinesEllipsis)
 
@@ -291,8 +294,29 @@ const Chat: FC<{
 
 const Users: FC = () => {
     const [search, setSearch] = useDebounceValue('', 300)
-    const [page, setPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10)
+    const navigate = useNavigate()
+    const { page, pageSize: itemsPerPage } = Route.useSearch()
+    const setItemsPerPage = useCallback((pageSize: number) => {
+        navigate({
+            to: '/chats/',
+            search: {
+                pageSize,
+                page: 1,
+            },
+        })
+    }, [])
+    const setPage = useCallback(
+        (page: number) => {
+            navigate({
+                to: '/chats/',
+                search: {
+                    page,
+                    pageSize: itemsPerPage,
+                },
+            })
+        },
+        [itemsPerPage],
+    )
 
     const queryClient = useQueryClient()
 
@@ -362,15 +386,29 @@ const Users: FC = () => {
             </div>
 
             <div className="mt-4 flex justify-center">
-                <Pagination showControls total={data?.total || 0} initialPage={1} onChange={setPage}></Pagination>
+                <Pagination showControls total={data?.total || 0} page={page} onChange={setPage}></Pagination>
             </div>
         </>
     )
 }
 
-export const Route = createFileRoute('/_auth/_dashboard/chats')({
+export const Route = createFileRoute('/_dashboard/chats')({
     component: Users,
-    beforeLoad: () => ({
-        title: 'Чаты',
+    validateSearch: z.object({
+        page: z
+            .number()
+            .optional()
+            .transform((page) => Math.max(0, page ?? 1)),
+        pageSize: z
+            .number()
+            .optional()
+            .transform((size) => Math.max(0, Math.min(size ?? 10, 20))),
     }),
+    beforeLoad: () =>
+        authenticated(async () => {
+            await queryClient.fetchQuery(queries.me.detail)
+            return {
+                title: 'Чаты',
+            }
+        }),
 })

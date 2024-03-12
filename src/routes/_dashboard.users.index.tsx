@@ -20,21 +20,43 @@ import {
 } from '@nextui-org/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, type FC, Key, useCallback, useMemo, type ReactNode } from 'react'
+import { type FC, Key, useCallback, useMemo, type ReactNode } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
 import { queries } from '@api/queries'
 import { toastError, toastSuccess } from '@/utils'
 import Message from '@/components/message'
+import { authenticated } from '@/router'
+import { queryClient } from '@/main'
+import { z } from 'zod'
 
 const Users: FC = () => {
-    const [search, setSearch] = useDebounceValue('', 300)
-    const [page, setPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10)
-
-    const queryClient = useQueryClient()
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
+    const [search, setSearch] = useDebounceValue('', 300)
+    const { page, pageSize: itemsPerPage } = Route.useSearch()
+    const setItemsPerPage = useCallback((pageSize: number) => {
+        navigate({
+            to: '/users/',
+            search: {
+                pageSize,
+                page: 1,
+            },
+        })
+    }, [])
+    const setPage = useCallback(
+        (page: number) => {
+            navigate({
+                to: '/users/',
+                search: {
+                    page,
+                    pageSize: itemsPerPage,
+                },
+            })
+        },
+        [itemsPerPage],
+    )
 
     const { data, isFetching, isError, error } = useQuery({
         ...queries.users.list({ search, page, itemsPerPage }),
@@ -118,9 +140,9 @@ const Users: FC = () => {
                                         variant="flat"
                                         onClick={() =>
                                             navigate({
-                                                to: '/users/$id',
+                                                to: '/users/$user_id',
                                                 params: {
-                                                    id: v.id.toString(),
+                                                    user_id: v.id.toString(),
                                                 },
                                             })
                                         }
@@ -180,10 +202,10 @@ const Users: FC = () => {
     const bottomContent = useMemo(
         () => (
             <div className="flex justify-center">
-                <Pagination showControls total={data?.total || 0} initialPage={1} onChange={setPage}></Pagination>
+                <Pagination showControls total={data?.total || 0} page={page} onChange={setPage}></Pagination>
             </div>
         ),
-        [data?.total, setPage],
+        [data?.total, setPage, page],
     )
 
     return (
@@ -245,9 +267,9 @@ const Users: FC = () => {
             <Table
                 onRowAction={(id) =>
                     navigate({
-                        to: '/users/$id',
+                        to: '/users/$user_id',
                         params: {
-                            id: id.toString(),
+                            user_id: id.toString(),
                         },
                     })
                 }
@@ -277,9 +299,29 @@ const Users: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/_dashboard/users/')({
+export const Route = createFileRoute('/_dashboard/users/')({
     component: Users,
-    beforeLoad: () => ({
-        title: '',
+    validateSearch: z.object({
+        page: z
+            .number()
+            .optional()
+            .transform((page) => Math.max(0, page ?? 1)),
+        pageSize: z
+            .number()
+            .optional()
+            .transform((size) => Math.max(0, Math.min(size ?? 10, 20))),
     }),
+    beforeLoad: ({ search }) =>
+        authenticated(async () => {
+            await queryClient.fetchQuery(
+                queries.users.list({
+                    search: '',
+                    page: search.page,
+                    itemsPerPage: search.pageSize,
+                }),
+            )
+            return {
+                title: '',
+            }
+        }),
 })

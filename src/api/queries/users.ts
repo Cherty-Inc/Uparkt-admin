@@ -40,6 +40,12 @@ export const users = createQueryKeys('users', {
                     return users
                 },
             }),
+            car: (carID: string | number) => ({
+                queryKey: [{ carID }],
+                queryFn: () => {
+                    return usersService.getUsersCarDetails({ userID, carID })
+                },
+            }),
             parkings: {
                 queryKey: null,
                 queryFn: () => {

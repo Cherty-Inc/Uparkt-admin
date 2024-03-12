@@ -64,7 +64,7 @@ const Cars: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/_dashboard/example')({
+export const Route = createFileRoute('/_dashboard/example')({
     component: Cars,
     beforeLoad: () => ({
         title: 'Пример',

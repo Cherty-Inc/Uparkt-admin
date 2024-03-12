@@ -3,6 +3,7 @@ import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import Topbar from '@/components/topbar'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
+import { authenticated } from '@/router'
 
 const ProfileLayout: FC = () => {
     const navigate = useNavigate()
@@ -21,11 +22,12 @@ const ProfileLayout: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/profile')({
+export const Route = createFileRoute('/profile')({
     component: ProfileLayout,
-    beforeLoad: () => {
-        return {
-            title: '',
-        }
-    },
+    beforeLoad: () =>
+        authenticated(async () => {
+            return {
+                title: 'Настройки',
+            }
+        }),
 })

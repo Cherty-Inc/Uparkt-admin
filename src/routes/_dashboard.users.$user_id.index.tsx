@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useState, type FC, ReactNode, Key, useCallback, useMemo } from 'react'
-import { queryClient } from '@/main'
 import {
     Accordion,
     AccordionItem,
@@ -30,11 +29,13 @@ import Message from '@/components/message'
 import * as usersService from '@api/services/users'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { z } from 'zod'
+import { authenticated } from '@/router'
+import { queryClient } from '@/main'
 
 const Transactions = () => {
     const userID = useParams({
-        from: '/_auth/_dashboard/users/$id',
-        select: (p) => p.id,
+        from: '/_dashboard/users/$user_id',
+        select: (p) => p.user_id,
     })
     const { data: user } = useQuery(queries.users.user(userID))
     const { data, isError, error, isFetching } = useQuery(queries.users.user(userID)._ctx.money)
@@ -103,8 +104,8 @@ const Transactions = () => {
 
 const Cars = () => {
     const userID = useParams({
-        from: '/_auth/_dashboard/users/$id',
-        select: (p) => p.id,
+        from: '/_dashboard/users/$user_id/',
+        select: (p) => p.user_id,
     })
     const [page, setPage] = useState(1)
     const [itemsPerPage] = useState(10)
@@ -114,6 +115,7 @@ const Cars = () => {
         ...queries.users.user(userID)._ctx.cars({ page, itemsPerPage }),
         placeholderData: (v) => v,
     })
+    const navigate = useNavigate()
 
     const bottomContent = useMemo(
         () => (
@@ -147,7 +149,20 @@ const Cars = () => {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Действия">
-                                    <DropdownItem aria-label="Изменить" color="warning" variant="flat">
+                                    <DropdownItem
+                                        aria-label="Изменить"
+                                        color="warning"
+                                        variant="flat"
+                                        onClick={() =>
+                                            navigate({
+                                                to: '/users/$user_id/car/$car_id/edit',
+                                                params: {
+                                                    car_id: v.id.toString(),
+                                                    user_id: userID,
+                                                },
+                                            })
+                                        }
+                                    >
                                         Изменить
                                     </DropdownItem>
                                     <DropdownItem aria-label="Удалить" color="danger" variant="flat">
@@ -212,8 +227,8 @@ const Cars = () => {
 
 const Parkings = () => {
     const userID = useParams({
-        from: '/_auth/_dashboard/users/$id',
-        select: (p) => p.id,
+        from: '/_dashboard/users/$user_id',
+        select: (p) => p.user_id,
     })
     const { data: user } = useQuery(queries.users.user(userID))
     const { data, isError, error, isFetching } = useQuery(queries.users.user(userID)._ctx.parkings)
@@ -330,8 +345,8 @@ const Parkings = () => {
 
 const UserDetails: FC = () => {
     const userID = useParams({
-        from: '/_auth/_dashboard/users/$id',
-        select: (p) => p.id,
+        from: '/_dashboard/users/$user_id',
+        select: (p) => p.user_id,
     })
     const navigate = useNavigate()
     const { view } = Route.useSearch()
@@ -339,9 +354,15 @@ const UserDetails: FC = () => {
         return new Set(view)
     }, [view])
     const onSelectionChange = (keys: Selection) => {
+        if (keys === 'all') {
+            return
+        }
         navigate({
+            params: {
+                id: userID,
+            },
             search: {
-                view: keys === 'all' ? [] : Array.from(keys),
+                view: Array.from(keys).map((k) => k.toString()),
             },
         })
     }
@@ -404,21 +425,16 @@ const UserDetails: FC = () => {
     )
 }
 
-export const Route = createFileRoute('/_auth/_dashboard/users/$id')({
+export const Route = createFileRoute('/_dashboard/users/$user_id/')({
     component: UserDetails,
     validateSearch: z.object({
         view: z.string().array().optional(),
     }),
-    beforeLoad: async ({ params }) => {
-        try {
-            const data = await queryClient.fetchQuery(queries.users.user(params.id))
+    beforeLoad: async ({ params }) =>
+        authenticated(async () => {
+            await queryClient.fetchQuery(queries.users.user(params.user_id))
             return {
-                title: [data.name, data.surname].join(' '),
+                title: '',
             }
-        } catch {
-            return {
-                title: 'Ошибка',
-            }
-        }
-    },
+        }),
 })

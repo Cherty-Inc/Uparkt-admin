@@ -127,6 +127,26 @@ export const getUsersCars = async (config: { id_user: string | number; offset: n
     return data
 }
 
+export const UserCarDetailsScheme = z.object({
+    id: z.number(),
+    name: z.string(),
+    number: z.string(),
+})
+export type UserCarDetailsSchemeType = z.infer<typeof UserCarDetailsScheme>
+
+export const getUsersCarDetails = async (config: { userID: number | string; carID: number | string }) => {
+    const scheme = z.object({
+        car: UserCarDetailsScheme,
+    })
+    const response = await privateAxios.get(`/api/v1.0/orders/car/${config.carID}`, {
+        params: {
+            id_user: config.userID.toString(),
+        },
+    })
+    const data = scheme.parse(response.data)
+    return data.car
+}
+
 export const UserParkingScheme = z.object({
     id: z.number(),
     name: z.string(),

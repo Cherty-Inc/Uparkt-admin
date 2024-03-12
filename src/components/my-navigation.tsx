@@ -17,7 +17,7 @@ const MyLink: FC<{
     return (
         <Button
             className="w-full justify-start"
-            as={Link}
+            as={Link as any}
             to={path}
             key={path}
             color="primary"
