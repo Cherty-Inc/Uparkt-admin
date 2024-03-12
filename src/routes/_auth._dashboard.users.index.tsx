@@ -261,7 +261,9 @@ const Users: FC = () => {
                     <TableColumn key="status">СТАТУС</TableColumn>
                     <TableColumn key="role">РОЛЬ</TableColumn>
                     <TableColumn key="datetime_create">СОЗДАН</TableColumn>
-                    <TableColumn key="actions">ДЕЙСТВИЯ</TableColumn>
+                    <TableColumn key="actions" className="text-end">
+                        ДЕЙСТВИЯ
+                    </TableColumn>
                 </TableHeader>
                 <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
                     {data?.users.map((v) => (
