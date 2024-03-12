@@ -88,7 +88,7 @@ const Transactions = () => {
                     <TableColumn key="description">ОПИСАНИЕ</TableColumn>
                     <TableColumn key="amount">СУММА</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
+                <TableBody emptyContent={'Пусто.'} isLoading={isFetching} loadingContent={<Spinner />}>
                     {data?.history.map((v, index) => (
                         <TableRow className="cursor-pointer" key={`${index}`}>
                             {cellRenderer(v)}
@@ -197,7 +197,7 @@ const Cars = () => {
                         ДЕЙСТВИЯ
                     </TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
+                <TableBody emptyContent={'Пусто.'} isLoading={isFetching} loadingContent={<Spinner />}>
                     {data?.cars.map((v) => <TableRow key={`${v.id}`}>{cellRenderer(v)}</TableRow>) || []}
                 </TableBody>
             </Table>
@@ -311,7 +311,7 @@ const Parkings = () => {
                         ДЕЙСТВИЯ
                     </TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
+                <TableBody emptyContent={'Пусто.'} isLoading={isFetching} loadingContent={<Spinner />}>
                     {data?.parkings.map((v, index) => (
                         <TableRow className="cursor-pointer" key={`${index}`}>
                             {cellRenderer(v)}

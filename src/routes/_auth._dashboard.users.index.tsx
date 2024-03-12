@@ -265,7 +265,7 @@ const Users: FC = () => {
                         ДЕЙСТВИЯ
                     </TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={'No rows to display.'} isLoading={isFetching} loadingContent={<Spinner />}>
+                <TableBody emptyContent={'Пусто.'} isLoading={isFetching} loadingContent={<Spinner />}>
                     {data?.users.map((v) => (
                         <TableRow className="cursor-pointer" key={`${v.id}`}>
                             {cellRenderer(v)}

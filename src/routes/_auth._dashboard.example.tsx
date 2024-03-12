@@ -58,7 +58,7 @@ const Cars: FC = () => {
                     <TableColumn>КОЛОНКА 3</TableColumn>
                     <TableColumn>КОЛОНКА 4</TableColumn>
                 </TableHeader>
-                <TableBody emptyContent={'No rows to display.'}>{[]}</TableBody>
+                <TableBody emptyContent={'Пусто.'}>{[]}</TableBody>
             </Table>
         </>
     )
