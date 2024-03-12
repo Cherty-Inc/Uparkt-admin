@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useState, type FC, ReactNode, Key, useCallback, useMemo } from 'react'
 import {
@@ -31,6 +31,7 @@ import { Icon } from '@iconify/react/dist/iconify.js'
 import { z } from 'zod'
 import { authenticated } from '@/router'
 import { queryClient } from '@/main'
+import { toastError, toastSuccess } from '@/utils'
 
 const Transactions = () => {
     const userID = useParams({
@@ -117,6 +118,29 @@ const Cars = () => {
     })
     const navigate = useNavigate()
 
+    const { mutate: deleteCar } = useMutation({
+        mutationFn: (vals: { userID: number; carID: number; carName?: string }) =>
+            usersService.deleteUsersCar(vals.userID, vals.carID),
+        onSuccess: async (_, vals) => {
+            toastSuccess(['Автомобиль', vals.carName, 'удален'].filter(Boolean).join(' '))
+            await navigate({
+                to: '/users/$user_id/',
+                params: {
+                    user_id: userID,
+                },
+                search: {
+                    view: ['cars'],
+                },
+                replace: true,
+            })
+            await queryClient.invalidateQueries(queries.users.one(vals.userID)._ctx.cars)
+            queryClient.removeQueries(queries.users.one(vals.userID)._ctx.cars._ctx.one(vals.carID))
+        },
+        onError: () => {
+            toastError('Ошибка')
+        },
+    })
+
     const bottomContent = useMemo(
         () => (
             <div className="flex justify-center">
@@ -132,65 +156,75 @@ const Cars = () => {
         [data?.total, setPage],
     )
 
-    const cellRenderer = useCallback((v: usersService.UserCarSchemeType) => {
-        return function cellRendererCallback(columnKey: Key) {
-            const key = columnKey.toString() as keyof typeof v | 'actions'
+    const cellRenderer = useCallback(
+        (v: usersService.UserCarSchemeType) => {
+            return function cellRendererCallback(columnKey: Key) {
+                const key = columnKey.toString() as keyof typeof v | 'actions'
 
-            let cellContent: ReactNode
+                let cellContent: ReactNode
 
-            switch (key) {
-                case 'actions': {
-                    cellContent = (
-                        <div className="relative flex items-center justify-end gap-2">
-                            <Dropdown placement="bottom-end">
-                                <DropdownTrigger>
-                                    <Button isIconOnly size="sm" variant="light">
-                                        <Icon icon="tabler:dots-vertical" className="size-6 text-default-400" />
-                                    </Button>
-                                </DropdownTrigger>
-                                <DropdownMenu aria-label="Действия">
-                                    <DropdownItem
-                                        aria-label="Изменить"
-                                        color="warning"
-                                        variant="flat"
-                                        onClick={() =>
-                                            navigate({
-                                                to: '/users/$user_id/car/$car_id/edit',
-                                                params: {
-                                                    car_id: v.id.toString(),
-                                                    user_id: userID,
-                                                },
-                                            })
-                                        }
-                                    >
-                                        Изменить
-                                    </DropdownItem>
-                                    <DropdownItem aria-label="Удалить" color="danger" variant="flat">
-                                        Удалить
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </div>
-                    )
-                    break
+                switch (key) {
+                    case 'actions': {
+                        cellContent = (
+                            <div className="relative flex items-center justify-end gap-2">
+                                <Dropdown placement="bottom-end">
+                                    <DropdownTrigger>
+                                        <Button isIconOnly size="sm" variant="light">
+                                            <Icon icon="tabler:dots-vertical" className="size-6 text-default-400" />
+                                        </Button>
+                                    </DropdownTrigger>
+                                    <DropdownMenu aria-label="Действия">
+                                        <DropdownItem
+                                            aria-label="Изменить"
+                                            color="warning"
+                                            variant="flat"
+                                            onClick={() =>
+                                                navigate({
+                                                    to: '/users/$user_id/edit-car/$car_id',
+                                                    params: {
+                                                        car_id: v.id.toString(),
+                                                        user_id: userID,
+                                                    },
+                                                })
+                                            }
+                                        >
+                                            Изменить
+                                        </DropdownItem>
+                                        <DropdownItem
+                                            aria-label="Удалить"
+                                            color="danger"
+                                            variant="flat"
+                                            onClick={() =>
+                                                deleteCar({
+                                                    userID: Number(userID),
+                                                    carID: v.id,
+                                                    carName: v.name,
+                                                })
+                                            }
+                                        >
+                                            Удалить
+                                        </DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </div>
+                        )
+                        break
+                    }
+                    default: {
+                        cellContent = v[key]
+                        break
+                    }
                 }
-                case 'number': {
-                    cellContent = v[key].toUpperCase()
-                    break
-                }
-                default: {
-                    cellContent = v[key]
-                    break
-                }
+
+                return (
+                    <TableCell>
+                        <div className="min-w-max">{cellContent}</div>
+                    </TableCell>
+                )
             }
-
-            return (
-                <TableCell>
-                    <div className="min-w-max">{cellContent}</div>
-                </TableCell>
-            )
-        }
-    }, [])
+        },
+        [userID],
+    )
 
     return (
         <>
@@ -428,7 +462,7 @@ const UserDetails: FC = () => {
 export const Route = createFileRoute('/_dashboard/users/$user_id/')({
     component: UserDetails,
     validateSearch: z.object({
-        view: z.string().array().optional(),
+        view: z.enum(['transactions-history', 'cars', 'parkings']).array().optional().catch([]),
     }),
     beforeLoad: async ({ params }) =>
         authenticated(async () => {

@@ -4,6 +4,7 @@ import Topbar from '@/components/topbar'
 import { Button } from '@nextui-org/react'
 import { Icon } from '@iconify/react'
 import { authenticated } from '@/router'
+import MyBreadcrumbs from '@/components/my-breadcrumbs'
 
 const ProfileLayout: FC = () => {
     const navigate = useNavigate()
@@ -12,6 +13,9 @@ const ProfileLayout: FC = () => {
         <div>
             <Topbar showLogo />
             <div className="container mx-auto p-4">
+                <div className="my-4">
+                    <MyBreadcrumbs />
+                </div>
                 <Button className="flex items-center leading-none" variant="flat" onClick={() => navigate({ to: '/' })}>
                     <Icon icon="tabler:arrow-left" className="size-5" />
                     Назад

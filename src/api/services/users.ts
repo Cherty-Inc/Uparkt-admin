@@ -147,6 +147,30 @@ export const getUsersCarDetails = async (config: { userID: number | string; carI
     return data.car
 }
 
+export const SetUserCarScheme = z.object({
+    id: z.number(),
+    id_user: z.number(),
+    name: z.string(),
+    number: z.string(),
+    id_type: z.number().optional().default(0),
+})
+export type SetUserCarSchemeType = z.input<typeof SetUserCarScheme>
+
+export const setUserCar = async (vals: SetUserCarSchemeType) => {
+    vals = SetUserCarScheme.parse(vals)
+    const response = await privateAxios.put('/api/v1.0/orders/car', vals)
+    return response
+}
+
+export const deleteUsersCar = async (userID: number, carID: string | number) => {
+    const response = await privateAxios.delete(`/api/v1.0/orders/car/${carID}`, {
+        data: {
+            id_user: userID,
+        },
+    })
+    return response
+}
+
 export const UserParkingScheme = z.object({
     id: z.number(),
     name: z.string(),
