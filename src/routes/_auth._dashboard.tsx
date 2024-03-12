@@ -1,8 +1,9 @@
-import { Link, Outlet, createFileRoute, useMatches } from '@tanstack/react-router'
-import { type FC, useMemo, Fragment } from 'react'
+import { Outlet, createFileRoute, useMatches, useNavigate, useRouterState } from '@tanstack/react-router'
+import { type FC, useMemo } from 'react'
 
 import MyNavigation from '@components/my-navigation'
 import Topbar from '@/components/topbar'
+import { BreadcrumbItem, Breadcrumbs } from '@nextui-org/react'
 
 const DashboardLayout: FC = () => {
     const matches = useMatches()
@@ -14,6 +15,8 @@ const DashboardLayout: FC = () => {
                 pathname: m.pathname,
             }))
     }, [matches])
+    const navigate = useNavigate()
+    const routerState = useRouterState()
 
     return (
         <>
@@ -24,14 +27,22 @@ const DashboardLayout: FC = () => {
                 <Topbar />
                 <div className="p-4 md:p-8">
                     <div className="mb-4 flex flex-wrap items-center gap-x-2">
-                        {breadcrumbs.map((b) => (
-                            <Fragment key={b.pathname}>
-                                <Link className="opacity-75 last-of-type:opacity-100" to={b.pathname}>
+                        <Breadcrumbs
+                            onAction={(key) =>
+                                navigate({
+                                    to: key.toString(),
+                                })
+                            }
+                        >
+                            {breadcrumbs.map((b) => (
+                                <BreadcrumbItem
+                                    key={b.pathname}
+                                    isCurrent={b.pathname === routerState.location.pathname}
+                                >
                                     {b.title}
-                                </Link>
-                                <span className="select-none opacity-75 last:hidden">/</span>
-                            </Fragment>
-                        ))}
+                                </BreadcrumbItem>
+                            ))}
+                        </Breadcrumbs>
                     </div>
                     <Outlet />
                 </div>
