@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useState, type FC, ReactNode, Key, useCallback, useMemo } from 'react'
 import { queryClient } from '@/main'
 import {
@@ -29,6 +29,7 @@ import { queries } from '@/api/queries'
 import Message from '@/components/message'
 import * as usersService from '@api/services/users'
 import { Icon } from '@iconify/react/dist/iconify.js'
+import { z } from 'zod'
 
 const Transactions = () => {
     const userID = useParams({
@@ -156,6 +157,10 @@ const Cars = () => {
                             </Dropdown>
                         </div>
                     )
+                    break
+                }
+                case 'number': {
+                    cellContent = v[key].toUpperCase()
                     break
                 }
                 default: {
@@ -328,7 +333,18 @@ const UserDetails: FC = () => {
         from: '/_auth/_dashboard/users/$id',
         select: (p) => p.id,
     })
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(() => new Set())
+    const navigate = useNavigate()
+    const { view } = Route.useSearch()
+    const selectedKeys = useMemo(() => {
+        return new Set(view)
+    }, [view])
+    const onSelectionChange = (keys: Selection) => {
+        navigate({
+            search: {
+                view: keys === 'all' ? [] : Array.from(keys),
+            },
+        })
+    }
 
     const { data, isError } = useQuery({
         ...queries.users.user(userID),
@@ -366,7 +382,7 @@ const UserDetails: FC = () => {
                         variant="splitted"
                         selectionMode="multiple"
                         selectedKeys={selectedKeys}
-                        onSelectionChange={setSelectedKeys}
+                        onSelectionChange={onSelectionChange}
                     >
                         <AccordionItem
                             key="transactions-history"
@@ -390,6 +406,9 @@ const UserDetails: FC = () => {
 
 export const Route = createFileRoute('/_auth/_dashboard/users/$id')({
     component: UserDetails,
+    validateSearch: z.object({
+        view: z.string().array().optional(),
+    }),
     beforeLoad: async ({ params }) => {
         try {
             const data = await queryClient.fetchQuery(queries.users.user(params.id))
