@@ -8,8 +8,9 @@ export const Route = createFileRoute('/_dashboard/users/$user_id')({
     beforeLoad: async ({ params }) =>
         authenticated(async () => {
             const data = await queryClient.fetchQuery(queries.users.one(params.user_id))
+            const title = [data.name, data.surname].join(' ').trim()
             return {
-                title: [data.name, data.surname].join(' '),
+                title: title || 'Без имени',
             }
         }),
 })

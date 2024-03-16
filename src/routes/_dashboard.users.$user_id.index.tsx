@@ -420,7 +420,9 @@ const UserDetails: FC = () => {
                             <AvatarIcon />
                         </div>
                         <div className="text-center md:text-start">
-                            <h1 className="mb-2 text-2xl font-semibold">{[data?.name, data?.surname].join(' ')}</h1>
+                            <h1 className="mb-2 text-2xl font-semibold">
+                                {[data?.name, data?.surname].join(' ').trim() || 'Без имени'}
+                            </h1>
                             {data?.email && (
                                 <a className="mb-2 block max-w-max opacity-50" href={'mailto:' + data.email}>
                                     {data.email}
