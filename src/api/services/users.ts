@@ -52,14 +52,12 @@ export const getUser = async (userID: string | number) => {
 
 export const getAllUsers = async (config: {
     search: string
-    sort: number
     offset: number
     limit: number
-    statuses: UserStatusSchemeType[]
+    statuses: (boolean | null)[]
 }) => {
     const response = await privateAxios.post('/api/v1.0/admins/get_users', {
         search: config.search,
-        sort: config.sort,
         offset: config.offset,
         limit: config.limit,
         statuses: config.statuses,
@@ -85,8 +83,8 @@ export const deleteUser = async (id: number) => {
 
 export const UserMoneyTransactionScheme = z.object({
     title: z.string(),
-    amount: z.number(),
-    description: z.number(),
+    amount: z.string(),
+    description: z.string().nullable(),
 })
 export type UserMoneyTransactionSchemeType = z.infer<typeof UserMoneyTransactionScheme>
 

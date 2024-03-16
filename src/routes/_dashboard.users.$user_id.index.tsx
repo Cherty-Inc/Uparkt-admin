@@ -57,7 +57,7 @@ const Transactions = () => {
                     break
                 }
                 case 'amount': {
-                    cellContent = v.amount + '₽'
+                    cellContent = v.amount + ' ₽'
                     break
                 }
             }
@@ -86,7 +86,6 @@ const Transactions = () => {
                 removeWrapper
             >
                 <TableHeader>
-                    <TableColumn key="id">ID</TableColumn>
                     <TableColumn key="title">НАЗВАНИЕ</TableColumn>
                     <TableColumn key="description">ОПИСАНИЕ</TableColumn>
                     <TableColumn key="amount">СУММА</TableColumn>
@@ -414,7 +413,7 @@ const UserDetails: FC = () => {
                 <>
                     <div className="relative my-16 flex flex-col items-center gap-8 md:flex-row">
                         <div className="absolute right-0 top-0 inline-block rounded-full bg-foreground-600 px-4 py-2 leading-none text-background shadow-lg shadow-black/25">
-                            {data?.balance} ₽
+                            {data?.balance.toLocaleString()} ₽
                         </div>
 
                         <div className="flex size-48 items-center justify-center rounded-full bg-black !bg-opacity-10 text-foreground-600 dark:bg-white">
@@ -423,11 +422,15 @@ const UserDetails: FC = () => {
                         <div className="text-center md:text-start">
                             <h1 className="mb-2 text-2xl font-semibold">{[data?.name, data?.surname].join(' ')}</h1>
                             {data?.email && (
-                                <a className="mb-2 block opacity-50" href={'mailto:' + data.email}>
+                                <a className="mb-2 block max-w-max opacity-50" href={'mailto:' + data.email}>
                                     {data.email}
                                 </a>
                             )}
-                            {data?.phone && <p className="mb-2 opacity-50">{data.phone}</p>}
+                            {data?.phone && (
+                                <a className="mb-2 block max-w-max opacity-50" href={'tel:' + data.phone}>
+                                    {data.phone}
+                                </a>
+                            )}
                             <div className="flex flex-wrap justify-center gap-1 md:justify-start">
                                 {data?.role.map((r) => <Chip key={r}>{r}</Chip>)}
                             </div>

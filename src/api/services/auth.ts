@@ -3,6 +3,7 @@ import { privateAxios, publicAxios } from '@api/axios'
 import { md5 } from 'js-md5'
 import { DateTime } from 'luxon'
 import { z } from 'zod'
+import { intersection } from 'lodash-es'
 
 export interface TUserData {
     accessToken: string | null
@@ -78,7 +79,8 @@ export const login = async (vars: { login: string; password: string; fbid?: stri
     }
 
     const me = await getMe()
-    if (!me.role.includes('Администратор')) {
+    const hisRoles = me.role
+    if (intersection(['Администратор', 'Менеджер'], hisRoles).length === 0) {
         await logout()
         throw new Error('Не удалось залогиниться, недостаточно прав')
     }

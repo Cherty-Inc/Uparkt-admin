@@ -8,6 +8,7 @@ import {
     DropdownTrigger,
     Input,
     Pagination,
+    Selection,
     Spacer,
     Spinner,
     Table,
@@ -20,7 +21,7 @@ import {
 } from '@nextui-org/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { type FC, Key, useCallback, useMemo, type ReactNode } from 'react'
+import { type FC, Key, useCallback, useMemo, type ReactNode, useState } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
 
 import * as usersService from '@api/services/users'
@@ -58,15 +59,35 @@ const Users: FC = () => {
         [itemsPerPage],
     )
 
+    const [statusFilters, setStatusFilters] = useState<Selection>(() => new Set([]))
+    const statusFiltersCount = useMemo(() => {
+        if (statusFilters === 'all') {
+            return -1
+        }
+        return statusFilters.size
+    }, [statusFilters])
+
     const { data, isFetching, isError, error } = useQuery({
-        ...queries.users.list({ search, page, itemsPerPage }),
+        ...queries.users.list({
+            search,
+            page,
+            itemsPerPage,
+            statusFilters: useMemo(() => {
+                if (statusFilters === 'all') {
+                    return []
+                } else {
+                    return Array.from(statusFilters) as string[]
+                }
+            }, [statusFilters]),
+        }),
         placeholderData: (v) => v,
     })
 
     const { mutateAsync: banUserAsync } = useMutation({
-        mutationFn: usersService.banUser,
-        onSuccess: (_, id) => {
-            toastSuccess(`Пользователь с ID ${id} заблокирован`)
+        mutationFn: (vals: { id: number; status: string }) => usersService.banUser(vals.id),
+        onSuccess: (_, vals) => {
+            const actionPerformed = vals.status === 'Активен' ? 'заблокирован' : 'разблокирован'
+            toastSuccess(`Пользователь с ID ${vals.id} ${actionPerformed}`)
             queryClient.invalidateQueries({
                 queryKey: queries.users._def,
             })
@@ -125,6 +146,37 @@ const Users: FC = () => {
                     break
                 }
                 case 'actions': {
+                    const actions = []
+                    if (v.status === 'Активен') {
+                        actions.push({
+                            label: 'Подробно',
+                            color: 'default' as const,
+                            onClick: () =>
+                                navigate({
+                                    to: '/users/$user_id',
+                                    params: {
+                                        user_id: v.id.toString(),
+                                    },
+                                }),
+                        })
+                    }
+                    if (['Заблокирован', 'Активен'].find((s) => v.status === s)) {
+                        actions.push({
+                            label: v.status === 'Заблокирован' ? 'Разблокировать' : 'Заблокировать',
+                            color: 'warning' as const,
+                            onClick: () =>
+                                banUserAsync({
+                                    id: v.id,
+                                    status: v.status,
+                                }),
+                        })
+                        actions.push({
+                            label: 'Удалить',
+                            color: 'danger' as const,
+                            onClick: () => deleteUserAsync(v.id),
+                        })
+                    }
+
                     cellContent = (
                         <div className="relative flex items-center justify-end gap-2">
                             <Dropdown placement="bottom-end">
@@ -133,38 +185,18 @@ const Users: FC = () => {
                                         <Icon icon="tabler:dots-vertical" className="size-6 text-default-400" />
                                     </Button>
                                 </DropdownTrigger>
-                                <DropdownMenu aria-label="Действия">
-                                    <DropdownItem
-                                        aria-label="Подробно"
-                                        color="default"
-                                        variant="flat"
-                                        onClick={() =>
-                                            navigate({
-                                                to: '/users/$user_id',
-                                                params: {
-                                                    user_id: v.id.toString(),
-                                                },
-                                            })
-                                        }
-                                    >
-                                        Подробно
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        aria-label="Забанить"
-                                        color="warning"
-                                        variant="flat"
-                                        onClick={() => banUserAsync(v.id)}
-                                    >
-                                        Забанить
-                                    </DropdownItem>
-                                    <DropdownItem
-                                        aria-label="Удалить"
-                                        color="danger"
-                                        variant="flat"
-                                        onClick={() => deleteUserAsync(v.id)}
-                                    >
-                                        Удалить
-                                    </DropdownItem>
+                                <DropdownMenu aria-label="Действия" items={actions} emptyContent="Действий нет">
+                                    {(item) => (
+                                        <DropdownItem
+                                            key={item.label}
+                                            aria-label={item.label}
+                                            color={item.color}
+                                            variant="flat"
+                                            onClick={item.onClick}
+                                        >
+                                            {item.label}
+                                        </DropdownItem>
+                                    )}
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -233,26 +265,55 @@ const Users: FC = () => {
                 </Button>
             </div>
 
-            <div className="flex justify-end">
-                <Dropdown placement="bottom-end">
+            <div className="flex items-center px-1">
+                <Dropdown placement="bottom-start">
                     <DropdownTrigger>
                         <Button variant="light" size="sm" disableRipple className="!bg-transparent">
-                            Элементов на страницу: {itemsPerPage}
+                            Статус
+                            {statusFiltersCount > 0 && (
+                                <span className="opacity-50">
+                                    ({statusFiltersCount === 1 && 'выбран '}
+                                    {statusFiltersCount > 1 && 'выбрано '}
+                                    {statusFiltersCount})
+                                </span>
+                            )}
                             <Icon icon="tabler:chevron-down" />
                         </Button>
                     </DropdownTrigger>
                     <DropdownMenu
-                        aria-label="Количество элементов на странице"
-                        disallowEmptySelection
-                        selectionMode="single"
-                        selectedKeys={[itemsPerPage.toString()]}
-                        onSelectionChange={(keys: any) => setItemsPerPage(Number(keys.currentKey))}
+                        aria-label="Статус фильтр"
+                        variant="flat"
+                        closeOnSelect={false}
+                        selectionMode="multiple"
+                        selectedKeys={statusFilters}
+                        onSelectionChange={setStatusFilters}
                     >
-                        <DropdownItem key="5">5</DropdownItem>
-                        <DropdownItem key="10">10</DropdownItem>
-                        <DropdownItem key="20">20</DropdownItem>
+                        <DropdownItem key="active">Активен</DropdownItem>
+                        <DropdownItem key="blocked">Заблокирован</DropdownItem>
+                        <DropdownItem key="deleted">Удален</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
+                <div className="ml-auto">
+                    <Dropdown placement="bottom-end">
+                        <DropdownTrigger>
+                            <Button variant="light" size="sm" disableRipple className="!bg-transparent">
+                                Элементов на страницу: {itemsPerPage}
+                                <Icon icon="tabler:chevron-down" />
+                            </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                            aria-label="Количество элементов на странице"
+                            disallowEmptySelection
+                            selectionMode="single"
+                            selectedKeys={[itemsPerPage.toString()]}
+                            onSelectionChange={(keys: any) => setItemsPerPage(Number(keys.currentKey))}
+                        >
+                            <DropdownItem key="5">5</DropdownItem>
+                            <DropdownItem key="10">10</DropdownItem>
+                            <DropdownItem key="20">20</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
             </div>
 
             {isError ? (
@@ -264,19 +325,7 @@ const Users: FC = () => {
             ) : undefined}
             {isError && <Spacer x={0} y={4} />}
 
-            <Table
-                onRowAction={(id) =>
-                    navigate({
-                        to: '/users/$user_id',
-                        params: {
-                            user_id: id.toString(),
-                        },
-                    })
-                }
-                aria-label="Таблица пользователей"
-                bottomContent={bottomContent}
-                bottomContentPlacement="outside"
-            >
+            <Table aria-label="Таблица пользователей" bottomContent={bottomContent} bottomContentPlacement="outside">
                 <TableHeader>
                     <TableColumn key="id">ID</TableColumn>
                     <TableColumn key="user">ПОЛЬЗОВАТЕЛЬ</TableColumn>
@@ -288,11 +337,7 @@ const Users: FC = () => {
                     </TableColumn>
                 </TableHeader>
                 <TableBody emptyContent={'Пусто.'} isLoading={isFetching} loadingContent={<Spinner />}>
-                    {data?.users.map((v) => (
-                        <TableRow className="cursor-pointer" key={`${v.id}`}>
-                            {cellRenderer(v)}
-                        </TableRow>
-                    )) || []}
+                    {data?.users.map((v) => <TableRow key={`${v.id}`}>{cellRenderer(v)}</TableRow>) || []}
                 </TableBody>
             </Table>
         </>
@@ -318,6 +363,7 @@ export const Route = createFileRoute('/_dashboard/users/')({
                     search: '',
                     page: search.page,
                     itemsPerPage: search.pageSize,
+                    statusFilters: [],
                 }),
             )
             return {
