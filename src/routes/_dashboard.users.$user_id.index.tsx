@@ -11,7 +11,6 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
-    Image,
     Pagination,
     Selection,
     Spacer,
@@ -32,6 +31,7 @@ import { z } from 'zod'
 import { authenticated } from '@/router'
 import { queryClient } from '@/main'
 import { toastError, toastSuccess } from '@/utils'
+import ImageWithModal from '@/components/image-with-modal'
 
 const Transactions = () => {
     const userID = useParams({
@@ -274,7 +274,16 @@ const Parkings = () => {
 
             switch (key) {
                 case 'photo': {
-                    cellContent = <Image isZoomed src={v.photo} className="h-24 w-auto" />
+                    cellContent = (
+                        <ImageWithModal
+                            previewProps={{
+                                isZoomed: true,
+                                radius: 'sm',
+                                className: 'h-32 w-auto',
+                            }}
+                            src={v.photo}
+                        />
+                    )
                     break
                 }
                 case 'date': {
@@ -351,6 +360,7 @@ const Parkings = () => {
             <Table
                 aria-label={`Таблица транзакций пользователя ${[user?.name, user?.surname].join(' ')} ID: ${userID}`}
                 removeWrapper
+                isStriped
             >
                 <TableHeader>
                     <TableColumn key="id">ID</TableColumn>
