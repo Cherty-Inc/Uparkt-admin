@@ -66,6 +66,16 @@ const Users: FC = () => {
         }
         return statusFilters.size
     }, [statusFilters])
+    const onStatusFilterSelectionChange = (selection: Selection) => {
+        setStatusFilters(selection)
+        navigate({
+            to: '/users/',
+            search: {
+                page: 1,
+                pageSize: itemsPerPage,
+            },
+        })
+    }
 
     const { data, isFetching, isError, error } = useQuery({
         ...queries.users.list({
@@ -286,7 +296,7 @@ const Users: FC = () => {
                         closeOnSelect={false}
                         selectionMode="multiple"
                         selectedKeys={statusFilters}
-                        onSelectionChange={setStatusFilters}
+                        onSelectionChange={onStatusFilterSelectionChange}
                     >
                         <DropdownItem key="active">Активен</DropdownItem>
                         <DropdownItem key="blocked">Заблокирован</DropdownItem>
