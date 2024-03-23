@@ -194,3 +194,82 @@ export const getUsersParkings = async (userID: string | number) => {
     const data = ManyUserParkingsScheme.parse(response.data)
     return data
 }
+
+export const UserParkingDetailsScheme = z.object({
+    id: z.number(),
+    name: z.string(),
+    description: z.string(),
+    address: z.object({
+        address: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+    }),
+    from_date: z.string().transform((s) => DateTime.fromFormat(s, 'dd.MM.yyyy').toISO()),
+    to_date: z.string().transform((s) => DateTime.fromFormat(s, 'dd.MM.yyyy').toISO()),
+    price: z.number(),
+    quantity: z.number(),
+    photos: z
+        .string()
+        .transform((s) => ({ src: s }))
+        .array(),
+    services: z.number().array(),
+})
+export type UserParkingDetailsSchemeType = z.infer<typeof UserParkingDetailsScheme>
+
+export const getUsersParkingDetails = async (userID: string | number, parkingID: string | number) => {
+    const scheme = z.object({
+        parking: UserParkingDetailsScheme,
+    })
+    const response = await privateAxios.get(`/api/v1.0/orders/parking/${parkingID}`, {
+        params: {
+            id_user: userID,
+        },
+    })
+    const data = scheme.parse(response.data)
+    return data.parking
+}
+
+export const deleteUsersParking = async (userID: string | number, parkingID: number | string) => {
+    const response = await privateAxios.delete(`/api/v1.0/orders/parking/${parkingID}`, {
+        params: {
+            id_user: userID,
+        },
+    })
+    return response
+}
+
+export const SetUserParkingScheme = z.object({
+    id_parking: z.number(),
+    id_user: z.number(),
+    name: z.string(),
+    description: z.string(),
+    information: z.object({
+        address: z.object({
+            address: z.string(),
+            latitude: z.number().transform((n) => n.toString()),
+            longitude: z.number().transform((n) => n.toString()),
+        }),
+        from_date: z.string().transform((s) => {
+            const iso = DateTime.fromISO(s)
+            return `${iso.day}.${iso.month}.${iso.year}`
+        }),
+        to_date: z.string().transform((s) => {
+            const iso = DateTime.fromISO(s)
+            return `${iso.day}.${iso.month}.${iso.year}`
+        }),
+    }),
+    price: z.number(),
+    quantity: z.number(),
+    photos: z.string().array(),
+    services: z.object({
+        services: z.number().array(),
+    }),
+})
+export type SetUserParkingSchemeType = z.input<typeof SetUserParkingScheme>
+
+export const setUserParking = async (vals: SetUserParkingSchemeType) => {
+    const data = SetUserParkingScheme.parse(vals)
+    console.log(data)
+    const response = await privateAxios.put('/api/v1.0/orders/parking', data)
+    return response
+}

@@ -69,6 +69,12 @@ export const users = createQueryKeys('users', {
                 queryFn: () => {
                     return usersService.getUsersParkings(userID)
                 },
+                contextQueries: {
+                    one: (parkingID: string | number) => ({
+                        queryKey: [{ parkingID }],
+                        queryFn: () => usersService.getUsersParkingDetails(userID, parkingID),
+                    }),
+                },
             },
         },
     }),

@@ -266,6 +266,21 @@ const Parkings = () => {
     const { data: user } = useQuery(queries.users.one(userID))
     const { data, isError, error, isFetching } = useQuery(queries.users.one(userID)._ctx.parkings)
 
+    const navigate = useNavigate()
+
+    const { mutate: deleteParking } = useMutation({
+        mutationFn: (vals: { userID: number; parkingID: number; name?: string }) =>
+            usersService.deleteUsersParking(vals.userID, vals.parkingID),
+        onSuccess: async (_, vals) => {
+            toastSuccess(['Парковка', vals.name, 'удалена'].filter(Boolean).join(' '))
+            await queryClient.invalidateQueries(queries.users.one(vals.userID)._ctx.cars)
+            queryClient.removeQueries(queries.users.one(vals.userID)._ctx.parkings._ctx.one(vals.parkingID))
+        },
+        onError: () => {
+            toastError('Ошибка')
+        },
+    })
+
     const cellRenderer = useCallback((v: usersService.UserParkingSchemeType) => {
         return function cellRendererCallback(columnKey: Key) {
             const key = columnKey.toString() as keyof typeof v | 'actions'
@@ -320,10 +335,34 @@ const Parkings = () => {
                                     </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu aria-label="Действия">
-                                    <DropdownItem aria-label="Изменить" color="warning" variant="flat">
+                                    <DropdownItem
+                                        aria-label="Изменить"
+                                        color="warning"
+                                        variant="flat"
+                                        onClick={() =>
+                                            navigate({
+                                                to: '/users/$user_id/edit-parking/$parking_id',
+                                                params: {
+                                                    parking_id: v.id.toString(),
+                                                    user_id: userID,
+                                                },
+                                            })
+                                        }
+                                    >
                                         Изменить
                                     </DropdownItem>
-                                    <DropdownItem aria-label="Удалить" color="danger" variant="flat">
+                                    <DropdownItem
+                                        aria-label="Удалить"
+                                        color="danger"
+                                        variant="flat"
+                                        onClick={() =>
+                                            deleteParking({
+                                                userID: Number(userID),
+                                                parkingID: Number(v.id),
+                                                name: v.name,
+                                            })
+                                        }
+                                    >
                                         Удалить
                                     </DropdownItem>
                                 </DropdownMenu>
