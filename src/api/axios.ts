@@ -1,6 +1,5 @@
 import axios from 'axios'
 import * as authService from '@api/services/auth'
-import { router } from '@/router'
 
 const baseURL = 'https://server.uparkt.ru'
 
@@ -30,9 +29,7 @@ privateAxios.interceptors.response.use(
     async (err) => {
         if (err.response) {
             if (err.response.status === 403 || err.response.status === 401) {
-                await router.navigate({
-                    to: '/login',
-                })
+                location.pathname = '/login'
             }
         }
 
