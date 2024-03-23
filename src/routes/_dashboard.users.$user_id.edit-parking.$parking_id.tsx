@@ -104,19 +104,23 @@ const ParkingEdit: FC = () => {
     const onSubmit = handleSubmit(async (data) => {
         let uploadedPhotos = []
         const formData = new FormData()
+        let hasToUpload = false
         for (const photoUrl of data.photos) {
             if (photoUrl.src.startsWith('blob:')) {
                 const blob = await fetch(photoUrl.src).then((r) => r.blob())
                 const file = new File([blob], `img.${mime.extension(blob.type)}`)
                 formData.append('files', file)
+                hasToUpload = true
             } else {
                 uploadedPhotos.push(photoUrl.src)
             }
         }
 
-        // upload blob files
-        const response = await privateAxios.post('/api/v1.0/files/upload_files', formData)
-        uploadedPhotos = uploadedPhotos.concat(response.data.files_path)
+        if (hasToUpload) {
+            // upload blob files
+            const response = await privateAxios.post('/api/v1.0/files/upload_files', formData)
+            uploadedPhotos = uploadedPhotos.concat(response.data.files_path)
+        }
 
         const update: usersService.SetUserParkingSchemeType = {
             ...data,
