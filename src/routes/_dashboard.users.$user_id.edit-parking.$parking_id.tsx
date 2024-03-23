@@ -9,7 +9,6 @@ import { authenticated } from '@/router'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { DevTool } from '@hookform/devtools'
 
 import * as usersService from '@api/services/users'
 import { toastError, toastSuccess } from '@/utils'
@@ -142,7 +141,6 @@ const ParkingEdit: FC = () => {
             {isError && <Message color="danger">Не удалось загрузить данные о парковке</Message>}
             {!isError && (
                 <>
-                    <DevTool control={control} />
                     <div className="my-16">
                         <Skeleton isLoaded={isSuccess}>
                             <div className="flex justify-between gap-4">
