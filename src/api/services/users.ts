@@ -251,11 +251,11 @@ export const SetUserParkingScheme = z.object({
         }),
         from_date: z.string().transform((s) => {
             const iso = DateTime.fromISO(s)
-            return `${iso.day}.${iso.month}.${iso.year}`
+            return iso.toFormat('yyyy-MM-dd')
         }),
         to_date: z.string().transform((s) => {
             const iso = DateTime.fromISO(s)
-            return `${iso.day}.${iso.month}.${iso.year}`
+            return iso.toFormat('yyyy-MM-dd')
         }),
     }),
     price: z.number(),
