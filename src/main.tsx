@@ -27,7 +27,7 @@ export const queryClient = new QueryClient({
             refetchOnWindowFocus: true,
             retry: (failureCount, error) => {
                 if (error instanceof AxiosError) {
-                    if (error.response?.status === 401 || error.response?.status === 403) {
+                    if (error.response?.status === 402 || error.response?.status === 403) {
                         return false
                     }
                 }
@@ -69,4 +69,4 @@ const render = async () => {
     }
 }
 
-render()
+void render
